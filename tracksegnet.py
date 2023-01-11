@@ -19,18 +19,17 @@ from datetime import datetime
 from tensorflow.keras.models import load_model
 
 # Local modules
-from src.track import simulate_tracks
+from src.track import simulate_tracks, extract_all_mdf
 from src.generate_lstm_model import generate_lstm_model
 from src.plot import get_color_list, get_label_list
 
 
-
 ## For GPU usage, uncomment the following lines:
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
-CONFIG = ConfigProto()
-CONFIG.gpu_options.allow_growth = True
-SESSION = InteractiveSession(config=CONFIG)
+# from tensorflow.compat.v1 import ConfigProto
+# from tensorflow.compat.v1 import InteractiveSession
+# CONFIG = ConfigProto()
+# CONFIG.gpu_options.allow_growth = True
+# SESSION = InteractiveSession(config=CONFIG)
 
 
 if __name__ == "__main__":
@@ -75,7 +74,7 @@ if __name__ == "__main__":
         'track_length_fixed': True,
         'track_length': 27,
         ## Parameters to simulate trajectories:
-        'num_simulate_tracks': 10000, # Number of tracks to simulate
+        'num_simulate_tracks': 1500, # Number of tracks to simulate
         'ptm': np.zeros(PAR['num_states']) + 0.1 + (1 - PAR['num_states'] / 10) * np.identity(PAR['num_states']),
         # Probability Transition Matrix: the probability to switch to any other state is 0.1
         'min_frames':4, # Minimal amount of frames
