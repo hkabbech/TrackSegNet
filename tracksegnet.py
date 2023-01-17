@@ -10,19 +10,20 @@
 """
 
 # Third-party modules
-
 import os
+import sys
 from pathlib import Path
+from datetime import datetime
 import numpy as np
 import pandas as pd
-from datetime import datetime
 from tensorflow.keras.models import load_model
 
 # Local modules
-from src.track import simulate_tracks, extract_all_mdf
+from src.simulate_tracks import run_track_simulation
+from src.experimental_tracks import extract_all_mdf, predict_states
 from src.generate_lstm_model import generate_lstm_model
-from src.plot import get_color_list, get_label_list
-
+from src.analysis import compute_ptm, make_tracklet_lists, compute_all_msd,\
+    plot_scatter_alpha_diffusion
 
 ## For GPU usage, uncomment the following lines:
 # from tensorflow.compat.v1 import ConfigProto
@@ -32,53 +33,61 @@ from src.plot import get_color_list, get_label_list
 # SESSION = InteractiveSession(config=CONFIG)
 
 
+def get_color_list(num_states):
+    """Create list of colors"""
+    if num_states == 1:
+        colors = ['k']
+    if num_states == 2:
+        colors = ['darkblue', 'red']
+    elif num_states == 3:
+        colors = ['darkblue', 'darkorange', 'red']
+    elif num_states == 4:
+        colors = ['darkblue', 'darkorange', 'red', 'green']
+    elif num_states == 5:
+        colors = ['darkblue', 'darkorange', 'red', 'green', 'darkviolet']
+    else:
+        print('Please, select 5 states or less.')
+    return colors
+
 if __name__ == "__main__":
 
     START_TIME = datetime.now()
 
+    PARMS_FILENAME = 'parms_THZ1_inhibitor.tsv' # sys.argv[0]
+    PARMS_DF = pd.read_csv(PARMS_FILENAME, sep='\t').set_index('parms').squeeze().to_dict()
 
-    PAR = {
+    NSTATES = int(PARMS_DF['num_states'])
+    PARMS = {
         ## Path to the trajectories to analyze:
-        'data_path': Path('data/toy_example'),
+        'data_path': Path(PARMS_DF['data_path']),
 
-        ## Parameters related to images / microscope settings:
-        'time_frame': 0.007, # Time between two frames in second
-        'pixel_size': 0.1, # in um (micron)
-        'img_size': {'x': 450, 'y': 75}, # Image size in pixel
+        ## Microscope settings:
+        'time_frame': float(PARMS_DF['time_frame']), # Time between two frames in second
+        'pixel_size': float(PARMS_DF['pixel_size']), # in micron
 
+        ## Diffusive states:
+        'num_states': NSTATES,
         # List of diffusive state:
-        # Each dictionary contains parameters desribing the behaviour of tracjectories within a state
-        # These motion parameters are the anomalous exponent alpha (representing the confinement) and
-        # the sigma value (influence on the diffusion: sigma = np.sqrt((diffusion/unit)*2))
-        'all_states': [
-            ## Hurst coefficient and sigma factor:
-            {'alpha': 0.2, 'sigma': 0.3, 'state': 'immobile'},
-            {'alpha': 0.5, 'sigma': 0.6, 'state': 'slow'},
-            {'alpha': 1, 'sigma': 1.1, 'state': 'fast'} 
-        ]
-    }
+        # motion parameters describing the behaviour of tracjectories within a state:
+        # (1) the anomalous exponent alpha (expressing the confinement)
+        # (2) the sigma value (related to the diffusion: sigma = np.sqrt((diffusion/unit)*2))
+        'all_states': [{
+            'alpha': float(PARMS_DF[f'state_{state}_alpha']),
+            'sigma': float(PARMS_DF[f'state_{state}_sigma'])
+            } for state in range(1, NSTATES+1)],
 
-    # Number of states
-    PAR.update({'num_states': len(PAR['all_states'])})
+        ## Restrictions on the track length:
+        'length_threshold': 6,
 
-    PAR.update({
-
-        ## Restrictions on the number of frames:
-        'threshold': {
-            'track': 3,
-            'tracklet': [1 for _ in range(PAR['num_states'])]
-        },
-
-        # Number of dimensions:
+        ## Trajectory simulation:
         'n_dim': 2, # X and Y coordinates => 2 dimensions
         'track_length_fixed': True,
         'track_length': 27,
-        ## Parameters to simulate trajectories:
-        'num_simulate_tracks': 1500, # Number of tracks to simulate
-        'ptm': np.zeros(PAR['num_states']) + 0.1 + (1 - PAR['num_states'] / 10) * np.identity(PAR['num_states']),
-        # Probability Transition Matrix: the probability to switch to any other state is 0.1
+        'num_simulate_tracks': 10000,
+        # transition probabilities
+        'ptm': np.zeros(NSTATES) + 0.1 + (1 - NSTATES / 10) * np.identity(NSTATES),
         'min_frames':4, # Minimal amount of frames
-        'min_frames_in_same_state':4, # Minimal amount of frames when particle remains in the same state
+        'min_frames_in_same_state':4, # Minimal amount of frames for particles remaining in a state
         'beta':100, # Mean of exponential distribution for length tracks
         'num_interval':10, # Parameter for retricted motion
         'motion':20, # Parameter for retricted motion
@@ -89,67 +98,61 @@ if __name__ == "__main__":
         'epochs': 1000, # Maximum number of epochs
         'patience': 15, # Parameter for the EarlyStopping function
         'batch_size': 2**5,
-        'percentage': {'val': 1/3, 'test':1/4},
+        'percent': {'val': 1/3, 'test':1/4},
 
         # Cell folders containing tracks.simple.mdf file to analyze
-        'folder_names': [PAR['data_path']/folder for folder in os.listdir(PAR['data_path'])],
+        'folder_names': [Path(f"{PARMS_DF['data_path']}/{folder}")\
+                         for folder in os.listdir(PARMS_DF['data_path'])],
 
         # Colors and labels for plotting:
-        'colors': get_color_list(PAR['num_states']),
-        'labels': get_label_list(PAR['num_states'])
-    })
+        'colors': get_color_list(NSTATES),
+    }
 
 
-    STATES = f'{PAR["num_states"]}states=[' + '_'.join([f'({state["alpha"]},{state["sigma"]})' for nstate, state in enumerate(PAR['all_states'])]) + ']'
+    STATES = f"{PARMS['num_states']}states=[" + '_'.join([f"({state['alpha']},{state['sigma']})"\
+        for _, state in enumerate(PARMS['all_states'])]) + "]"
 
     # Paths:
-    PAR.update({
-        'simulated_track_path': Path(f'results/lstm_models/{PAR["num_simulate_tracks"]}_simulated_tracks_{int(PAR["time_frame"]*1000)}ms'),
-        'result_path': Path(f'results/{PAR["data_path"].name}_{STATES}_{int(PAR["time_frame"]*1000)}ms'),
-    }),
-    PAR.update({
-        'model_path': PAR["simulated_track_path"]/f'model_{STATES}',
-        'plot_path': PAR["result_path"]/'analysis_plots',
+    PARMS.update({
+        'simulated_track_path': Path(f"results/lstm_models/{PARMS['num_simulate_tracks']}_simulated_tracks"),
+        'result_path': Path(f"results/{PARMS['data_path'].name}_{int(PARMS['time_frame']*1000)}ms_{STATES}"),
+    })
+    PARMS.update({
+        'model_path': PARMS['simulated_track_path']/f'model_{STATES}',
+        'plot_path': PARMS['result_path']/'analysis_plots',
     })
 
-    os.makedirs(PAR['model_path'], exist_ok=True)
-    os.makedirs(PAR['plot_path'], exist_ok=True)
+    os.makedirs(PARMS['model_path'], exist_ok=True)
+    os.makedirs(PARMS['plot_path'], exist_ok=True)
     os.makedirs('data', exist_ok=True)
 
-
-    ## BUILT LSTM MODEL
+    ## BUILD LSTM MODEL
     ###################
-    sim_csvfilename = PAR['simulated_track_path']/'simulated_tracks_df.csv'
-    if not os.path.isfile(sim_csvfilename):
-        sim_df = simulate_tracks(PAR)
+    SIM_CSV = PARMS['simulated_track_path']/'simulated_tracks_df.csv'
+    if not os.path.isfile(SIM_CSV):
+        SIM_DF = run_track_simulation(PARMS)
     else:
-        sim_df = pd.read_csv(sim_csvfilename)
-
-    # if not os.path.isfile(PAR['model_path']/'best_model.h5'):
-    generate_lstm_model(sim_df, PAR)
-    
+        SIM_DF = pd.read_csv(SIM_CSV)
+    if not os.path.isfile(PARMS['model_path']/'best_model.h5'):
+        generate_lstm_model(SIM_DF, PARMS)
 
     ## PREDICT TRACKLET STATE
     #########################
-    MODEL = load_model(PAR['model_path']/'best_model.h5', compile=False)
+    MODEL = load_model(PARMS['model_path']/'best_model.h5', compile=False)
 
-    track_csvfilename = PAR['result_path']/f"{PAR['data_path'].name}_tracks_df.csv"
-    if not os.path.isfile(track_csvfilename):
-        track_df = extract_all_mdf(PAR)
+    TRACK_CSV = PARMS['result_path']/f"{PARMS['data_path'].name}_tracks_df.csv"
+    if not os.path.isfile(TRACK_CSV):
+        TRACK_DF = extract_all_mdf(PARMS)
     else:
-        track_df = pd.read_csv(track_csvfilename)
+        TRACK_DF = pd.read_csv(TRACK_CSV)
 
-    predict_states(track_df, MODEL)
-
-
+    if 'state' not in TRACK_DF:
+        predict_states(TRACK_DF, MODEL, PARMS)
 
     ## ANALYSIS
     ###########
-
-    # DATA.create_tracklet_lists(PAR)
-    # DATA.compute_mss_analysis(PAR)
-    # DATA.count_tracklets_per_mdf(PAR['result_path'], PAR)
-    # DATA.compute_ptm(PAR['result_path'], PAR)
-    # with open(PAR['result_path']/'TrackletAnalysis.p', 'wb') as file:
-    #     pickle.dump(DATA, file)
-
+    print(compute_ptm(TRACK_DF, PARMS))
+    TRACKLET_LISTS = make_tracklet_lists(TRACK_DF, PARMS)
+    MOTION_PARMS = compute_all_msd(TRACKLET_LISTS, PARMS)
+    plot_scatter_alpha_diffusion(MOTION_PARMS, PARMS)
+    # TODO in scatterplot: markersize and distribution based on the number of data points!
