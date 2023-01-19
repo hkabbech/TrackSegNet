@@ -1,0 +1,10 @@
+parms	value
+data_path	data/toy_example
+time_frame	0.007
+pixel_size	0.1
+state_1_alpha	0.2
+state_1_sigma	0.3
+state_2_alpha	0.5
+state_2_sigma	0.6
+state_3_alpha	1
+state_3_sigma	1.1

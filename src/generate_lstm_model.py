@@ -5,86 +5,76 @@
 
 # Third-party modules
 import os
-import pickle
 from datetime import datetime
 from contextlib import redirect_stdout
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rc
-import seaborn as sns
 from tensorflow.keras.utils import to_categorical
-
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import LSTM, Dense, TimeDistributed, Bidirectional 
+from tensorflow.keras.layers import LSTM, Dense, TimeDistributed, Bidirectional
 
-# sns.set(color_codes=True)
-# rc('text', usetex=True)
 
-def generate_lstm_model(sim_df, par):
-    """
-        Generate LSTM model
-    """
+def generate_lstm_model(sim_df, parms):
+    """Prepares the dataset, defines the neural network, trains and evaluates the model."""
     print('\nTrain LSTM model...')
     start_time = datetime.now()
 
-    ## DATA PREPARATION
-    ###################
-    all_features = np.array([sim_df[sim_df['track_id']==N][['displ_x', 'displ_y', 'dist', 'mean_dist_1', 'mean_dist_2', 'angle']].to_numpy()[1:-1]\
+    ## Prepare the datasets
+    feature_names = ['displ_x', 'displ_y', 'dist', 'mean_dist_1', 'mean_dist_2', 'angle']
+    all_features = np.array([sim_df[sim_df['track_id'] == N][feature_names].to_numpy()[1:-1]\
         for N in sim_df['track_id'].unique()])
-    all_true_states = np.array([sim_df[sim_df['track_id']==N]['state'].to_numpy()[1:-1]\
+    all_true_states = np.array([sim_df[sim_df['track_id'] == N]['state'].to_numpy()[1:-1]\
         for N in sim_df['track_id'].unique()])
     # Split data into train and test set (with shuffeling)
 
-    all_true_states = to_categorical(all_true_states, num_classes=par['num_states'])
+    all_true_states = to_categorical(all_true_states, num_classes=parms['num_states'])
 
     # split in training and test data
-    num_train = round((1-par['percentage']['test'])*len(all_features))
+    num_train = round((1-parms['percent']['test'])*len(all_features))
     train_set = {'features': all_features[:num_train], 'states': all_true_states[:num_train]}
     test_set = {'features': all_features[num_train:], 'states': all_true_states[num_train:]}
 
 
-    ## LSTM MODEL
-    #############
+    ## Define the LSTM neural network
     model = Sequential()
-    model.add(Bidirectional(LSTM(par['hidden_units'], return_sequences=True),
-                            input_shape=(None, par['num_features']), merge_mode='concat'))
-    model.add(TimeDistributed(Dense((par['num_states']), activation='softmax'))) # Softmax to get
+    model.add(Bidirectional(LSTM(parms['hidden_units'], return_sequences=True),
+                            input_shape=(None, parms['num_features']), merge_mode='concat'))
+    model.add(TimeDistributed(Dense((parms['num_states']), activation='softmax'))) # Softmax to get
     # 'probability distribution'
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     # Training stops once the model performance does not improve on a hold out validation dataset
     # The best mode lis saved
-    callbacks = [EarlyStopping(monitor='val_loss', patience=par['patience']),\
-                 ModelCheckpoint(filepath=str(par['model_path']/'best_model.h5'), monitor='val_loss',
-                                 save_best_only=True)]
+    callbacks = [EarlyStopping(monitor='val_loss', patience=parms['patience']),\
+                 ModelCheckpoint(filepath=str(parms['model_path']/'best_model.h5'),
+                                 monitor='val_loss', save_best_only=True)]
     history = model.fit(train_set['features'], train_set['states'], callbacks=callbacks,
-                        epochs=par['epochs'], batch_size=par['batch_size'],
-                        validation_split=par['percentage']['val'], shuffle=True)
-    plot_training_curves(par['model_path'], history, par['patience'])
-    with open(par['model_path']/'model_summary.txt', 'w') as file:
+                        epochs=parms['epochs'], batch_size=parms['batch_size'],
+                        validation_split=parms['percent']['val'], shuffle=True)
+    plot_training_curves(parms['model_path'], history, parms['patience'])
+    with open(parms['model_path']/'model_summary.txt', 'w') as file:
         with redirect_stdout(file):
             model.summary()
 
-
-    ## EVALUATION
-    #############
+    ## evaluate the model
     # Predicting on test set and convert binary matrix into vector
-    best_model = load_model(par['model_path']/'best_model.h5')
+    best_model = load_model(parms['model_path']/'best_model.h5')
     train_evaluation = best_model.evaluate(train_set['features'], train_set['states'], verbose=0)
     test_evaluation = best_model.evaluate(test_set['features'], test_set['states'], verbose=0)
 
-    with open(par['model_path']/'evaluation_model.txt', 'w') as file:
-        print(f'Train loss:\t{train_evaluation[0]:.2f}\tTrain accuracy:\t{train_evaluation[1]:.2f}', file=file)
-        print(f'Test loss:\t{test_evaluation[0]:.2f}\tTest accuracy:\t{test_evaluation[1]:.2f}', file=file)
+    with open(parms['model_path']/'evaluation_model.txt', 'w') as file:
+        print(f'Train loss:\t{train_evaluation[0]:.2f}\tTrain accuracy:\t{train_evaluation[1]:.2f}',
+              file=file)
+        print(f'Test loss:\t{test_evaluation[0]:.2f}\tTest accuracy:\t{test_evaluation[1]:.2f}',
+              file=file)
     predicted_test = best_model.predict(test_set['features'])
     predicted_states_test = predicted_test.argmax(axis=2) # Predicted transition states
     true_states_test = test_set['states'].argmax(axis=2) # Real transition states
     booleans = np.array(predicted_states_test == true_states_test, dtype=int)
-    plot_accuracy_over_window(par['model_path'], booleans, par['track_length']-2)
+    plot_accuracy_over_window(parms['model_path'], booleans, parms['track_length']-2)
 
 
-    ## TIMER
-    ########
+    ## total running time
     time = datetime.now() - start_time
     hours = time.seconds // 3600
     minutes = time.seconds // 60 % 60
@@ -92,9 +82,7 @@ def generate_lstm_model(sim_df, par):
 
 
 def plot_training_curves(path, history, patience):
-    """
-        Plot loss and accuracy training curves
-    """
+    """Plots loss and accuracy training curves."""
     path = path/'training_plots'
     os.makedirs(path, exist_ok=True)
 
@@ -121,13 +109,10 @@ def plot_training_curves(path, history, patience):
     plt.close()
 
 def plot_accuracy_over_window(path, booleans, window_size):
-    """
-        Plotting a bar graph of the accuracy gradient over window for specified window_size
-        and number of hidden units
-    """
+    """Plots a bar graph of the accuracy gradient over the tracks."""
     path = path/'training_plots'
     os.makedirs(path, exist_ok=True)
-    # ws in par['window_size'] and hu in par['hidden_units']
+    # ws in parms['window_size'] and hu in parms['hidden_units']
     booleans_mean = booleans.mean(axis=0)
     plt.bar(np.arange(window_size)+1, booleans_mean)
     plt.gca().set_xticks(np.arange(window_size)+1)

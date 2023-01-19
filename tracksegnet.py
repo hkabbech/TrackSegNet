@@ -23,7 +23,7 @@ from src.simulate_tracks import run_track_simulation
 from src.experimental_tracks import extract_all_mdf, predict_states
 from src.generate_lstm_model import generate_lstm_model
 from src.analysis import compute_ptm, make_tracklet_lists, compute_all_msd,\
-    plot_scatter_alpha_diffusion
+    plot_scatter_alpha_diffusion, plot_proportion
 
 ## For GPU usage, uncomment the following lines:
 # from tensorflow.compat.v1 import ConfigProto
@@ -53,7 +53,9 @@ if __name__ == "__main__":
 
     START_TIME = datetime.now()
 
-    PARMS_FILENAME = 'parms_THZ1_inhibitor.tsv' # sys.argv[0]
+    PARMS_FILENAME = sys.argv[0]
+    PARMS_FILENAME = 'parms_THZ1_inhibitor.tsv'
+    # PARMS_FILENAME = 'parms_UV.tsv'
     PARMS_DF = pd.read_csv(PARMS_FILENAME, sep='\t').set_index('parms').squeeze().to_dict()
 
     NSTATES = int(PARMS_DF['num_states'])
@@ -106,6 +108,11 @@ if __name__ == "__main__":
 
         # Colors and labels for plotting:
         'colors': get_color_list(NSTATES),
+
+        # Figure saving:
+        'fig_format': 'png',
+        'fig_dpi': 200,
+        'fig_transparent': False,
     }
 
 
@@ -119,11 +126,9 @@ if __name__ == "__main__":
     })
     PARMS.update({
         'model_path': PARMS['simulated_track_path']/f'model_{STATES}',
-        'plot_path': PARMS['result_path']/'analysis_plots',
     })
 
     os.makedirs(PARMS['model_path'], exist_ok=True)
-    os.makedirs(PARMS['plot_path'], exist_ok=True)
     os.makedirs('data', exist_ok=True)
 
     ## BUILD LSTM MODEL
@@ -132,18 +137,22 @@ if __name__ == "__main__":
     if not os.path.isfile(SIM_CSV):
         SIM_DF = run_track_simulation(PARMS)
     else:
+        print('\nLoad simulated trajectories...')
         SIM_DF = pd.read_csv(SIM_CSV)
+
     if not os.path.isfile(PARMS['model_path']/'best_model.h5'):
         generate_lstm_model(SIM_DF, PARMS)
 
     ## PREDICT TRACKLET STATE
     #########################
+    print('\nLoad trained model...')
     MODEL = load_model(PARMS['model_path']/'best_model.h5', compile=False)
 
     TRACK_CSV = PARMS['result_path']/f"{PARMS['data_path'].name}_tracks_df.csv"
     if not os.path.isfile(TRACK_CSV):
         TRACK_DF = extract_all_mdf(PARMS)
     else:
+        print('\nLoad experimental trajectories...')
         TRACK_DF = pd.read_csv(TRACK_CSV)
 
     if 'state' not in TRACK_DF:
@@ -156,3 +165,5 @@ if __name__ == "__main__":
     MOTION_PARMS = compute_all_msd(TRACKLET_LISTS, PARMS)
     plot_scatter_alpha_diffusion(MOTION_PARMS, PARMS)
     # TODO in scatterplot: markersize and distribution based on the number of data points!
+    plot_proportion(TRACKLET_LISTS, PARMS)
+
