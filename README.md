@@ -29,7 +29,7 @@ Note, to deactivate the virtual environment, type `deactivate`
 ```
 pip install virtualenv
 python -m venv tracksegnet-env
-source tracksegnet-env/bin/activate
+source tracksegnet-env/bin/activate #for Windows: source tracksegnet-env/Scripts/activate
 python -m pip install -r requirements.txt
 ```
 
