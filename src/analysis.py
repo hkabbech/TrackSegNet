@@ -45,6 +45,7 @@ def compute_ptm(track_df, parms):
 def make_tracklet_lists(track_df, parms):
     """Segment the trajectories into tracklet (based on the state group) and regroup them within the
     same list."""
+    print('\nSegment and group tracklets per diffusive states...')
     tracklet_lists = [[] for _ in range(parms['num_states'])]
     for track_id in tqdm(track_df['track_id'].unique()):
         track = track_df[track_df['track_id'] == track_id]
@@ -100,15 +101,15 @@ def compute_msd(track, size, dim=2):
 
 def compute_all_msd(tracklet_lists, parms):
     """Compute the MSD for each given track."""
+    print('\nCompute MSD...')
     motion_parms = [{'alpha': [], 'diffusion': []} for _ in range(parms['num_states'])]
-    for state, tracklet_list in enumerate(tracklet_lists):
-        print(state)
-        for tracklet in tracklet_list:
+    for state in tqdm([state for state in range(parms['num_states])]):
+        for tracklet in tracklet_lists[state]:
             if len(tracklet) >= parms['length_threshold']:
                 _, _, alpha, _, diffusion = compute_msd(tracklet, size=4)
                 diffusion = diffusion * parms['unit_diff']
-                print(f"spot {tracklet['track_id'].iloc[0]},", end=' ')
-                print(f"L = {len(tracklet)}, alpha = {alpha:.3}, diffusion = {diffusion:.3}")
+                # print(f"spot {tracklet['track_id'].iloc[0]},", end=' ')
+                # print(f"L = {len(tracklet)}, alpha = {alpha:.3}, diffusion = {diffusion:.3}")
                 motion_parms[state]['alpha'].append(alpha)
                 motion_parms[state]['diffusion'].append(diffusion)
     return motion_parms
@@ -158,7 +159,7 @@ def plot_proportion(tracklet_lists, parms):
     tracklet_num = [len(tracklet_list) for tracklet_list in tracklet_lists]
     labels = [f'state {state+1}\nn = {len(tracklet_list)}' for state, tracklet_list in enumerate(tracklet_lists)]
     fig, axs = plt.subplots()
-    axs.pie(tracklet_num, labels=labels, autopct='%1.1f%%')
+    axs.pie(tracklet_num, labels=labels, autopct='%1.1f%%', colors=parms['colors'])
     axs.axis('equal')
     fig.suptitle(f"{parms['data_path'].name} dataset")
     fig.tight_layout()
