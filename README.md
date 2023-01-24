@@ -20,7 +20,7 @@ source tracksegnet-env/bin/activate
 ```
 On Windows, run:
 ```
-tracksegnet-env\Scripts\activate
+tracksegnet-env\bin\activate
 ```
 Note, to deactivate the virtual environment, type `deactivate`
 
