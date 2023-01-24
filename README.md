@@ -1,6 +1,8 @@
 ![Python version](https://img.shields.io/badge/python-3.8-brightgreen.svg)
 
-# TrackSegNet: Trajectory segmentation into diffusive states using LSTM neural network
+# TrackSegNet
+
+Trajectory segmentation into diffusive states using LSTM neural network.
 
 ## Installation and requirements
 
@@ -20,20 +22,22 @@ On Windows, run:
 ```
 tracksegnet-env\Scripts\activate
 ```
+Note, to deactivate the virtual environment, type `deactivate`
 
 ### (Create the environment and install the packages)
+
 ```
-python -m venv tutorial-env
+pip install virtualenv
+python -m venv tracksegnet-env
+source tracksegnet-env/bin/activate
 python -m pip install -r requirements.txt
 ```
-
-Note, to deactivate the virtual environment, type `deactivate`
 
 ## Prepare your data
 
 ### Data organization
 
-Organize your data in a folder `SPT_Experiment`, each sub-folder should contains a `*.mdf` file containing the trajectories.
+Organize your data in a folder `SPT_Experiment`, each sub-folder should contain a file containing the trajectories in `mdf` format.
 
 ```
 .
@@ -52,7 +56,7 @@ Organize your data in a folder `SPT_Experiment`, each sub-folder should contains
 │
 ├── src/
 ├── tracksegnet-env/
-├── parms_toy_example.csv
+├── parms.csv
 ├── tracksegnet.py
 └── ...
 ```
@@ -76,7 +80,7 @@ For updating the parameters of the track simulation and neural network training,
 ## Run the program
 
 ```
-python tracksegnet.py parms.py
+python tracksegnet.py parms.csv
 ```
 
 ## Reference
