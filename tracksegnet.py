@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # coding: utf-8
 
 """
@@ -36,26 +36,27 @@ from src.analysis import compute_ptm, make_tracklet_lists, compute_all_msd,\
 def get_color_list(num_states):
     """Create list of colors"""
     if num_states == 1:
-        colors = ['k']
+        print('Please, select 2 to 6 states.')
     if num_states == 2:
         colors = ['darkblue', 'red']
     elif num_states == 3:
         colors = ['darkblue', 'darkorange', 'red']
     elif num_states == 4:
-        colors = ['darkblue', 'darkorange', 'red', 'green']
+        colors = ['darkblue', 'darkorange', 'red', 'darkviolet']
     elif num_states == 5:
-        colors = ['darkblue', 'darkorange', 'red', 'green', 'darkviolet']
+        colors = ['darkblue', 'darkorange', 'red', 'darkviolet', 'green']
+    elif num_states == 6:
+        colors = ['darkblue', 'darkorange', 'red', 'darkviolet', 'green', 'k']
     else:
-        print('Please, select 5 states or less.')
+        print('Please, select 2 to 6 states.')
     return colors
 
 if __name__ == "__main__":
 
     START_TIME = datetime.now()
 
-    PARMS_FILENAME = sys.argv[0]
-    PARMS_FILENAME = 'parms_THZ1_inhibitor.tsv'
-    # PARMS_FILENAME = 'parms_UV.tsv'
+    PARMS_FILENAME = 'parms.csv'
+    # PARMS_FILENAME = sys.argv[0]
     PARMS_DF = pd.read_csv(PARMS_FILENAME, sep='\t').set_index('parms').squeeze().to_dict()
 
     NSTATES = int(PARMS_DF['num_states'])
@@ -74,9 +75,9 @@ if __name__ == "__main__":
         # (1) the anomalous exponent alpha (expressing the confinement)
         # (2) the sigma value (related to the diffusion: sigma = np.sqrt((diffusion/unit)*2))
         'all_states': [{
-            'alpha': float(PARMS_DF[f'state_{state}_alpha']),
-            'sigma': float(PARMS_DF[f'state_{state}_sigma'])
-            } for state in range(1, NSTATES+1)],
+            'diff': float(PARMS_DF[f'state_{state}_diff']),
+            'alpha': float(PARMS_DF[f'state_{state}_alpha'])
+        } for state in range(1, NSTATES+1)],
 
         ## Restrictions on the track length:
         'length_threshold': 6,
@@ -115,8 +116,8 @@ if __name__ == "__main__":
         'fig_transparent': False,
     }
 
-
-    STATES = f"{PARMS['num_states']}states=[" + '_'.join([f"({state['alpha']},{state['sigma']})"\
+    PARMS['unit_diff'] = (PARMS['pixel_size']**2)/PARMS['time_frame'] # in um**2/2
+    STATES = f"{PARMS['num_states']}states=[" + '_'.join([f"({state['alpha']},{state['diff']})"\
         for _, state in enumerate(PARMS['all_states'])]) + "]"
 
     # Paths:
@@ -127,9 +128,8 @@ if __name__ == "__main__":
     PARMS.update({
         'model_path': PARMS['simulated_track_path']/f'model_{STATES}',
     })
-
     os.makedirs(PARMS['model_path'], exist_ok=True)
-    os.makedirs('data', exist_ok=True)
+    os.makedirs(PARMS['result_path'], exist_ok=True)
 
     ## BUILD LSTM MODEL
     ###################
@@ -166,4 +166,3 @@ if __name__ == "__main__":
     plot_scatter_alpha_diffusion(MOTION_PARMS, PARMS)
     # TODO in scatterplot: markersize and distribution based on the number of data points!
     plot_proportion(TRACKLET_LISTS, PARMS)
-

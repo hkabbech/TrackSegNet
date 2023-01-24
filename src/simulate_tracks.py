@@ -2,7 +2,7 @@
 
 This module contains a few functions used to simulate fractional Brownian motion (fBm) trajectories.
 The fBm kernel (Lundahl et al. 1986) is used to generate each dimension using a given alpha and
-sigma values (the motion parameters). The tracks are made of a mixture of N states.
+diffusion values (the motion parameters). The tracks are made of a mixture of N states.
 """
 
 # Third-party modules
@@ -15,12 +15,11 @@ from src.compute_features import compute_all_features
 from src.analysis import compute_ptm
 
 
-def get_fbm(total_frame, alpha, sigma):
+def get_fbm(total_frame, alpha, diff):
     """Generates a 1D fBm using the formula from Lundahl et al. 1986."""
     time_interval = np.arange(0, total_frame, 1)
     x_array, y_array = np.meshgrid(time_interval, time_interval)
     kval = np.abs(x_array - y_array)
-    diff = sigma**2 / 2.0
     fbm_kernel = diff * (np.abs(kval + 1)**alpha - 2*np.abs(kval)**alpha + np.abs(kval - 1)**alpha)
     fbm = np.linalg.cholesky(fbm_kernel)
     # generate franctional noise from independent Gaussian samples
@@ -74,9 +73,9 @@ def generate_fbm_tracks(parms):
                 track.loc[total:total+new_steps-1, 'state'] = state_i
                 # The x and y coordinates are generated based on the diffusion parameters:
                 alpha = parms['all_states'][state_i]['alpha']
-                sigma = parms['all_states'][state_i]['sigma']
-                track.loc[total:total+new_steps-1, 'x'] = get_fbm(new_steps, alpha, sigma)
-                track.loc[total:total+new_steps-1, 'y'] = get_fbm(new_steps, alpha, sigma)
+                diff_unitless = parms['all_states'][state_i]['diff'] / parms['unit_diff']
+                track.loc[total:total+new_steps-1, 'x'] = get_fbm(new_steps, alpha, diff_unitless)
+                track.loc[total:total+new_steps-1, 'y'] = get_fbm(new_steps, alpha, diff_unitless)
                 # Update of the current state and the amount of total steps
                 if parms['num_states'] > 1:
                     state_i = np.delete(np.arange(parms['num_states']), state_i)\

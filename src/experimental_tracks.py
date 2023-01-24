@@ -147,12 +147,14 @@ def extract_all_mdf(parms):
     for folder_name in tqdm(parms['folder_names']):
         all_track_df.append(extract_1_mdf(folder_name, parms))
     track_df = pd.concat(all_track_df).reset_index()
+    print(f'\n{track_df.shape[0]} coordinate points')
     print(track_df.head())
-    print(track_df.shape)
     track_df_2 = fill_gaps(track_df)
+    print(f'\n{track_df_2.shape[0]} coordinate points')
     print(track_df_2.head())
-    print(track_df_2.shape)
     compute_all_features(track_df_2)
+    print('')
+    print(track_df_2.head())
     track_df_2.to_csv(parms['result_path']/f"{parms['data_path'].name}_tracks_df.csv")
     return track_df_2
 
@@ -165,7 +167,9 @@ def predict_states(track_df, model, parms):
         features = track[['displ_x', 'displ_y', 'dist', 'mean_dist_1', 'mean_dist_2', 'angle']]
         features = features.to_numpy()[1:-1]
         features = features.reshape(1, features.shape[0], features.shape[-1])
-        predicted_states = model.predict(features)
+        predicted_states = model.predict(features, verbose=0)
         predicted_states = [np.nan] + predicted_states.argmax(axis=2)[0].tolist() + [np.nan]
         track_df.loc[track.index, 'state'] = predicted_states
+    print('')
+    print(track_df.head())
     track_df.to_csv(parms['result_path']/f"{parms['data_path'].name}_tracks_df.csv")

@@ -14,14 +14,12 @@ import seaborn as sns
 
 def convert_sigma(diffusion, parms):
     """Convert diffusion to sigma value."""
-    unit = (parms['pixel_size']**2)/parms['time_frame']
-    sigma = np.sqrt((diffusion/unit)*2)
+    sigma = np.sqrt((diffusion/parms['unit_diff'])*2)
     return sigma
 
 def convert_diffusion(sigma, parms):
     """Convert sigma to diffusion value."""
-    unit = (parms['pixel_size']**2)/parms['time_frame']
-    diffusion = ((sigma^2)/2)*unit
+    diffusion = ((sigma**2)/2)*parms['unit_diff']
     return diffusion
 
 def compute_ptm(track_df, parms):
@@ -108,7 +106,7 @@ def compute_all_msd(tracklet_lists, parms):
         for tracklet in tracklet_list:
             if len(tracklet) >= parms['length_threshold']:
                 _, _, alpha, _, diffusion = compute_msd(tracklet, size=4)
-                diffusion = diffusion * ((parms['pixel_size']**2)/parms['time_frame'])
+                diffusion = diffusion * parms['unit_diff']
                 print(f"spot {tracklet['track_id'].iloc[0]},", end=' ')
                 print(f"L = {len(tracklet)}, alpha = {alpha:.3}, diffusion = {diffusion:.3}")
                 motion_parms[state]['alpha'].append(alpha)
