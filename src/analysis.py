@@ -103,7 +103,7 @@ def compute_all_msd(tracklet_lists, parms):
     """Compute the MSD for each given track."""
     print('\nCompute MSD...')
     motion_parms = [{'alpha': [], 'diffusion': []} for _ in range(parms['num_states'])]
-    for state in tqdm([state for state in range(parms['num_states])]):
+    for state in tqdm([state for state in range(parms['num_states'])]):
         for tracklet in tracklet_lists[state]:
             if len(tracklet) >= parms['length_threshold']:
                 _, _, alpha, _, diffusion = compute_msd(tracklet, size=4)
