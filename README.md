@@ -29,7 +29,7 @@ Note, to deactivate the virtual environment, type `deactivate`
 ```
 pip install virtualenv
 python -m venv tracksegnet-env
-source tracksegnet-env/bin/activate #for Windows: source tracksegnet-env/Scripts/activate
+source tracksegnet-env/bin/activate #for Windows: tracksegnet-env\bin\activate
 python -m pip install -r requirements.txt
 ```
 
@@ -37,12 +37,12 @@ python -m pip install -r requirements.txt
 
 ### Data organization
 
-Organize your data in a folder `SPT_Experiment`, each sub-folder should contain a file containing the trajectories in `mdf` format.
+Organize your data in a folder `SPT_experiment`, each sub-folder should contain a file containing the trajectories in `mdf` format.
 
 ```
 .
 ├── data/
-│   └── SPT_Experiment/
+│   └── SPT_experiment/
 │       ├── Cell_1
 │       │    ├── *.tif
 │       │    └── *.mdf
@@ -65,12 +65,12 @@ Organize your data in a folder `SPT_Experiment`, each sub-folder should contain 
 
 Update the main parameters in the `parms.csv` file according to your experiment:
 
-- `data_path`: the path containing your data folder `SPT_Experiment` to analyze
+- `data_path`: the path containing your data folder `SPT_experiment` to analyze
 - `time_frame`: the time between two frames (in second)
-- `pixel_size`: the size of a pixel (in micrometer)
+- `pixel_size`: the size of a pixel (in $$\mu m$$)
 - `num_states`: the number of diffusive states for the classification(from 2 to 6 states)
-- `state_X_diff`: The expected diffusion value for state X (in μm^2/s).
-- `state_X_alpha`: The expected anomalous exponent alpha value for state X (from 0 to 2 -- 0-1: subdiffusion, 1: Brownian motion, 1-2: superdiffusion).
+- `state_X_diff`: The expected diffusion value for state X (in $$\mu m^2/s$$).
+- `state_X_alpha`: The expected anomalous exponent α value for state X (from 0 to 2 -- [0-1[: subdiffusion, 1: Brownian motion, ]1-2]: superdiffusion).
 
 Note that the program will run on the toy example if the parameters are unchanged.
 
