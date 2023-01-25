@@ -67,9 +67,9 @@ Update the main parameters in the `parms.csv` file according to your experiment:
 
 - `data_path`: the path containing your data folder `SPT_experiment` to analyze
 - `time_frame`: the time between two frames (in second)
-- `pixel_size`: the size of a pixel (in $$\mu m$$)
+- `pixel_size`: the size of a pixel (in µm)
 - `num_states`: the number of diffusive states for the classification(from 2 to 6 states)
-- `state_X_diff`: The expected diffusion value for state X (in $$\mu m^2/s$$).
+- `state_X_diff`: The expected diffusion value for state X (in µm^2/s).
 - `state_X_alpha`: The expected anomalous exponent α value for state X (from 0 to 2 -- [0-1[: subdiffusion, 1: Brownian motion, ]1-2]: superdiffusion).
 
 Note that the program will run on the toy example if the parameters are unchanged.
