@@ -1,4 +1,4 @@
-#!/home/helene/Downloads/TrackSegNet-main/tracksegnet-env/bin/python3
+#!/home/helene/Documents/test_JOSS/TrackSegNet/tracksegnet-env/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
