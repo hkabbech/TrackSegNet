@@ -39,7 +39,9 @@ def compute_ptm(track_df, parms):
     sum_of_rows[sum_of_rows == 0] = 1
     pis = counts / sum_of_rows[:, None]
     ptm = pd.DataFrame(pis)
+    ptm.columns = ptm.columns+1
     ptm['num'] = sum_of_rows
+    ptm.to_csv(parms['result_path']/'transition_probabilities.csv', index=False)
     return ptm
 
 def make_tracklet_lists(track_df, parms):
@@ -102,8 +104,8 @@ def compute_msd(track, size, dim=2):
 def compute_all_msd(tracklet_lists, parms):
     """Compute the MSD for each given track."""
     print('\nCompute MSD...')
-    motion_parms = [{'alpha': [], 'diffusion': []} for _ in range(parms['num_states'])]
-    for state in tqdm([state for state in range(parms['num_states'])]):
+    motion_parms = [{'alpha': [], 'diffusion': [], 'track_id': []} for _ in range(parms['num_states'])]
+    for state in tqdm(range(parms['num_states'])):
         for tracklet in tracklet_lists[state]:
             if len(tracklet) >= parms['length_threshold']:
                 _, _, alpha, _, diffusion = compute_msd(tracklet, size=4)
@@ -112,6 +114,8 @@ def compute_all_msd(tracklet_lists, parms):
                 # print(f"L = {len(tracklet)}, alpha = {alpha:.3}, diffusion = {diffusion:.3}")
                 motion_parms[state]['alpha'].append(alpha)
                 motion_parms[state]['diffusion'].append(diffusion)
+                motion_parms[state]['track_id'].append(tracklet['track_id'].iloc[0])
+        pd.DataFrame(motion_parms[state]).to_csv(parms['result_path']/f"motion_parms_state_{state+1}.csv", index=False)
     return motion_parms
 
 def plot_scatter_alpha_diffusion(motion_parms, parms):
@@ -156,7 +160,9 @@ def plot_scatter_alpha_diffusion(motion_parms, parms):
     plt.show()
 
 def plot_proportion(tracklet_lists, parms):
+    """Plot pie chart proportion of tracklets in each diffusive state"""
     tracklet_num = [len(tracklet_list) for tracklet_list in tracklet_lists]
+    print(tracklet_num)
     labels = [f'state {state+1}\nn = {len(tracklet_list)}' for state, tracklet_list in enumerate(tracklet_lists)]
     fig, axs = plt.subplots()
     axs.pie(tracklet_num, labels=labels, autopct='%1.1f%%', colors=parms['colors'])

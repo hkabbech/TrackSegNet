@@ -6,7 +6,7 @@ MDF file format).
 
 # Third-party modules
 import os
-from re import findall
+from re import findall, split
 from random import uniform
 # from multiprocessing import Pool, cpu_count
 # from functools import partial
@@ -55,6 +55,7 @@ def fill_gaps_l1(track):
                 'x': average_points['x'] - bias['x'],
                 'y': average_points['y'] - bias['x']*slop - bias['y'],
                 'frame': np.array([missing]),
+                'data folder': track.iloc[0]['data folder'],
                 'track_id': track.iloc[0]['track_id']
             })
         track = pd.concat(
@@ -62,7 +63,7 @@ def fill_gaps_l1(track):
         )
     return track, num_gaps_l1
 
-def fill_gaps(track_df):
+def fill_gaps(parms, track_df):
     """Splits the tracks into two separate trajectories for gaps larger than 1 frame."""
     num_tracks = len(track_df['track_id'].unique())
     print(f'\nCheck and fill gaps in {num_tracks:,d} trajectories...')
@@ -81,15 +82,28 @@ def fill_gaps(track_df):
         total_gaps_ln += len(indexes)
         indexes.append(end)
         for i, ind in enumerate(indexes):
-            new_track.loc[sta:ind, 'track_id'] = new_track.iloc[0]['track_id']+f'_{str(i)}'
+            # new 'track_id':
+            new_track.loc[sta:ind, 'track_id'] = split('_0$', new_track.iloc[0]['track_id'])[0]+f'_{str(i)}'
             sta = ind+1
         if track_df_2 is None:
             track_df_2 = new_track
         else:
             track_df_2 = pd.concat((track_df_2, new_track))
+    # Keep only tracks longer than parms['min_frames']:
+    print(f'\nKeep trajectories longer than {parms["min_frames"]}..')
+    track_df_3 = None
+    for track_id in tqdm(track_df_2['track_id'].unique()):
+        track = track_df_2[track_df_2['track_id'] == track_id]
+        if len(track) >= parms['min_frames']:
+            if track_df_3 is None:
+                track_df_3 = track
+            else:
+                track_df_3 = pd.concat((track_df_3, track))
+        else:
+            total_gaps_ln -= 1
     print(f"{total_gaps_l1:,d} length-1 gaps were filled in", end=' ')
     print(f"and {total_gaps_ln:,d} tracks created due to length-2+ gaps.")
-    return track_df_2.reset_index(drop=True)
+    return track_df_3.reset_index(drop=True)
 
 def extract_1_mdf(folder_name, parms):
     """Extracts experimental trajectories from one MDF file and return a pandas DataFrame containing
@@ -112,6 +126,7 @@ def extract_1_mdf(folder_name, parms):
                 # If old Track longer than the threshold then it is added to the list
                 if len(current_coord['x']) >= parms['length_threshold']:
                     track = pd.DataFrame(current_coord)
+                    track['data folder'] = str(folder_name) # PosixPath to str
                     track['track_id'] = folder_name.name.split('_')[-1] + '_' + index
                     if track_df is None:
                         track_df = track
@@ -131,6 +146,7 @@ def extract_1_mdf(folder_name, parms):
                 # If old Track longer than the threshold then it is added to the list
                 if len(current_coord['x']) >= parms['length_threshold']:
                     track = pd.DataFrame(current_coord)
+                    track['data folder'] = str(folder_name) # PosixPath to str
                     track['track_id'] = folder_name.name.split('_')[-1] + '_' + index
                     if track_df is None:
                         track_df = track
@@ -138,24 +154,50 @@ def extract_1_mdf(folder_name, parms):
                         track_df = pd.concat((track_df, track))
     return track_df
 
-def extract_all_mdf(parms):
+def extract_1_csv(folder_name, parms):
+    """Extracts experimental trajectories from one MDF file and return a pandas DataFrame containing
+    the trajectories."""
+    # Find mdf file to analyze
+    filename = 'tracks.csv'
+    if not os.path.isfile(folder_name/filename):
+        for filename in os.listdir(folder_name):
+            if filename.endswith(".csv"):
+                break
+    tracks = pd.read_csv(filename)
+    tracks['data folder'] = str(folder_name)
+
+    track_df = None
+    for track_id in tracks['track_id'].unique():
+        track = tracks[tracks['track_id'] == track_id]
+        if len(track['x']) >= parms['length_threshold']:
+            track['track_id'] = folder_name.name.split('_')[-1] + '_' + track_id
+            if track_df is None:
+                track_df = track
+            else:
+                track_df = pd.concat((track_df, track))
+    return track_df
+
+def extract_all_tracks(parms):
     """Extracts the trajectories from several MDF files and return a unique pandas
     DataFrame containing the tracks from all the files."""
     num_files = len(parms['folder_names'])
     print("\nExtraction of tracjectories from {} mdf files...".format(num_files))
     all_track_df = []
-    for folder_name in tqdm(parms['folder_names']):
-        all_track_df.append(extract_1_mdf(folder_name, parms))
+    if parms['track_format'] == 'MDF':
+        for folder_name in tqdm(parms['folder_names']):
+            all_track_df.append(extract_1_mdf(folder_name, parms))
+    elif parms['track_format'] == 'CSV':
+        for folder_name in tqdm(parms['folder_names']):
+            all_track_df.append(extract_1_csv(folder_name, parms))
     track_df = pd.concat(all_track_df).reset_index()
     print(f'\n{track_df.shape[0]} coordinate points')
     print(track_df.head())
-    track_df_2 = fill_gaps(track_df)
+    track_df_2 = fill_gaps(parms, track_df)
     print(f'\n{track_df_2.shape[0]} coordinate points')
     print(track_df_2.head())
     compute_all_features(track_df_2)
-    print('')
     print(track_df_2.head())
-    track_df_2.to_csv(parms['result_path']/f"{parms['data_path'].name}_tracks_df.csv")
+    track_df_2.to_csv(parms['result_path']/f"{parms['data_path'].name}_tracks_df.csv", index=False)
     return track_df_2
 
 def predict_states(track_df, model, parms):
@@ -172,4 +214,4 @@ def predict_states(track_df, model, parms):
         track_df.loc[track.index, 'state'] = predicted_states
     print('')
     print(track_df.head())
-    track_df.to_csv(parms['result_path']/f"{parms['data_path'].name}_tracks_df.csv")
+    track_df.to_csv(parms['result_path']/f"{parms['data_path'].name}_tracks_df.csv", index=False)
