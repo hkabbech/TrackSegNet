@@ -24,12 +24,12 @@ tracksegnet-env\bin\activate
 ```
 Note, to deactivate the virtual environment, type `deactivate`
 
-### (Create the environment and install the packages)
+### Or Create the environment and install the packages
 
 ```
-pip install virtualenv
-python -m venv tracksegnet-env
-source tracksegnet-env/bin/activate #for Windows: tracksegnet-env\bin\activate
+pip3 install virtualenv
+virtualenv -p /usr/bin/python3 tracksegnet-env
+source tracksegnet-env/bin/activate # for Windows: tracksegnet-env\bin\activate
 python -m pip install -r requirements.txt
 ```
 
@@ -37,7 +37,7 @@ python -m pip install -r requirements.txt
 
 ### Data organization
 
-Organize your data in a folder `SPT_experiment`, each sub-folder should contain a file containing the trajectories in `mdf` format.
+Organize your data in a folder `SPT_experiment`, each sub-folder should contain a file containing the trajectories in a `MDF` or `CSV` file format. If `CSV` format is used, the headers should be: `x, y, frame, track_id`
 
 ```
 .
