@@ -1,5 +1,6 @@
 parms	value
 data_path	data/toy_example
+track_format	MDF
 time_frame	0.007
 pixel_size	0.1
 num_states	3
@@ -9,3 +10,12 @@ state_2_diff	0.26
 state_2_alpha	0.5
 state_3_diff	0.86
 state_3_alpha	1
+pt_1_1	0.8
+pt_1_2	0.1
+pt_1_3	0.1
+pt_2_1	0.1
+pt_2_2	0.8
+pt_2_3	0.1
+pt_3_1	0.1
+pt_3_2	0.1
+pt_3_3	0.8
