@@ -17,7 +17,7 @@ affiliations:
  - name: Department of Cell Biology, Erasmus University Medical Center, Rotterdam, the Netherlands
    index: 1
 date: 14 March 2023
-bibliography: paper/paper.bib
+bibliography: paper.bib
 ---
 
 # Summary
@@ -29,7 +29,7 @@ Recent advances in the field of microscopy allow the capture, at nanometer resol
 
 # Method
 
-The method is based on @Arts:2019 with slight improvements described in the "novelty" subsection. This software was specifically developed for replicability on other datasets.
+The method is based on @Arts:2019 with slight improvements described in the "Novelty" subsection. This software was specifically developed for replicability on other datasets.
 
 
 ## Neural Network
@@ -69,7 +69,7 @@ The remaining parameters are related to the experimental dataset:
 
 After training the model, the gaps in the trajectories are filled (see next subsection) and the features are computed for each experimental trajectories. Each point are therefore classified as one of the $N$ diffusive states using the trained model. Based on the state classification, the trajectories are segmented and the motion parameters are estimated for each segmented track (longer than 6 frames) using the MSD analysis. It consists of applying a least-square fit from the logarithm form of the MSD power-law equation [@Metzler:2014]. Both $D$ and $\alpha$ distributions can be plotted in a scatterplot as shown in Figure \autoref{fig:scatterplot}. The new probability transition matrix and proportion of tracklet points in each diffusive state are also calculated.
 
-![Scatterplot of $D$ and $\alpha$ distributions estimated from the MSD analysis using the segmented trajectories. \label{fig:scatterplot}](paper/fig_toy_example_scatterplot_msd.png)
+![Scatterplot of $D$ and $\alpha$ distributions estimated from the MSD analysis using the segmented trajectories. \label{fig:scatterplot}](fig_toy_example_scatterplot_msd.png)
 
 
 ## Novelty
