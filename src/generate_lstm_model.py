@@ -1,6 +1,6 @@
-"""
-.. module:: generate_lstm_model.py
-   :synopsis: This module implements functions to generate a LSTM model
+"""Generate LSTM model
+
+This module implements functions to generate a LSTM model for trajectory classification.
 """
 
 # Third-party modules
