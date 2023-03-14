@@ -37,7 +37,8 @@ python -m pip install -r requirements.txt
 
 ### Data organization
 
-Organize your data in a folder `SPT_experiment`, each sub-folder should contain a file containing the trajectories in a `MDF` or `CSV` file format. If `CSV` format is used, the headers should be: `x, y, frame, track_id`
+Organize your data in a folder `SPT_experiment`, each sub-folder should contain a file containing the trajectories in a `MDF` or `CSV` file format.
+If `CSV` format is used, the headers should be: `x, y, frame, track_id`
 
 ```
 .
