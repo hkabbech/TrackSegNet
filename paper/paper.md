@@ -26,26 +26,26 @@ bibliography: paper.bib
 
 # Statment of need
 
-Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021:2021]. A typical analysis is the classification and segmentation of trajectories into diverse diffusive state, when multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule (e.g., protein bound/unbound to the DNA).
+Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021]. A typical analysis is the classification and segmentation of trajectories into diverse diffusive state, when multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule (e.g., protein bound/unbound to the DNA).
 
 
 # Method
 
-The method is based on @Arts:2019 with slight improvements described in the "Novelty" subsection. This software was specifically developed for replicability on other datasets.
+The method is based on @arts2019 with slight improvements described in the "Novelty" subsection. This software was specifically developed for replicability on other datasets.
 
 
 ## Neural Network
 
 Tracking particles from 2-dimensional images results in a set $\mathcal{S}$ of trajectories $r_i \in \mathcal{S}$, $i = \left{1, \dots, P \right}$,  where $P$ is the total number of trajectories and $r_i(t) = (x_i(t), y_i(t))$ are the 2D coordinates of the particle $i$ at time $t$.
 
-The network is built using functions from the Keras library [@Chollet:2015], and is composed of a bidirectional long short-term memory (LSTM) layer (having 200 hidden units) followed by a fully connected time-distributed layer with a `SoftMax` activation function. The inputs of the network are of six trajectory features computed beforehand, while the outputs are probabilities for each trajectory point of belonging to one of the $N$ diffusive states, the predicted state is defined by the highest probability.
+The network is built using functions from the Keras library [@chollet2015], and is composed of a bidirectional long short-term memory (LSTM) layer (having 200 hidden units) followed by a fully connected time-distributed layer with a `SoftMax` activation function. The inputs of the network are of six trajectory features computed beforehand, while the outputs are probabilities for each trajectory point of belonging to one of the $N$ diffusive states, the predicted state is defined by the highest probability.
 
 The computed features along a given trajectory are: the displacements $\Delta x_{\delta=1}$ and $\Delta y_{\delta=1}$ at the first discrete time interval $\delta$ (with $\Delta r_\delta (t) = r(t) - r(t+\delta)$), the distances $d_{\delta=1}$ (with $d_\delta (t) = \sqrt{\Delta x_\delta (t)^2 - \Delta y_\delta (t)^2}$), the mean of displacements $\overline{d_{\delta=1,p=1}}$ and $\overline{d_{\delta=2,p=1}}$ ($\overline{d_{\delta,p}}(t) = \frac{1}{2p+1}\sum_{k=t-p}^{t+p} d_{\delta}(k)$ with $p\geq 1$) and the angles between two consecutive displacements $\theta_{\delta=1}$. The first and last trajectory points of each trajectory vector are discarded due to missing feature(s).
 
 
 ## Training
 
-The network is trained using synthetic fractional Brownian motion (fBm) trajectories of mixed diffusive states. For this purpose, 10,000 fBm trajectories with a switching mode between states and a total length of 27 frames are generated for each training. The fBm process is characterized using the fBm kernel [@Lundahl:1986] defined as $k_{\text{FBM}}(t) = D\left[\ |t+1|^\alpha  - 2 |t|^\alpha + |t-1|^\alpha\right]$, with $t=\Delta t / \delta$ ($\Delta t$ the time measured between two frames) and the pre-defined motion parameters $m = (D, \alpha)$.
+The network is trained using synthetic fractional Brownian motion (fBm) trajectories of mixed diffusive states. For this purpose, 10,000 fBm trajectories with a switching mode between states and a total length of 27 frames are generated for each training. The fBm process is characterized using the fBm kernel [@lundahl1986] defined as $k_{\text{FBM}}(t) = D\left[\ |t+1|^\alpha  - 2 |t|^\alpha + |t-1|^\alpha\right]$, with $t=\Delta t / \delta$ ($\Delta t$ the time measured between two frames) and the pre-defined motion parameters $m = (D, \alpha)$.
 
 The model is optimized using `Adam` during the training and a categorical cross-entropy loss function.
 
@@ -69,7 +69,7 @@ The remaining parameters are related to the experimental dataset:
 ## Classification and MSD analysis
 
 
-After training the model, the gaps in the trajectories are filled (see next subsection) and the features are computed for each experimental trajectories. Each point are therefore classified as one of the $N$ diffusive states using the trained model. Based on the state classification, the trajectories are segmented and the motion parameters are estimated for each segmented track (longer than 6 frames) using the MSD analysis. It consists of applying a least-square fit from the logarithm form of the MSD power-law equation [@Metzler:2014]. Both $D$ and $\alpha$ distributions can be plotted in a scatterplot as shown in Figure \autoref{fig:scatterplot}. The new probability transition matrix and proportion of tracklet points in each diffusive state are also calculated.
+After training the model, the gaps in the trajectories are filled (see next subsection) and the features are computed for each experimental trajectories. Each point are therefore classified as one of the $N$ diffusive states using the trained model. Based on the state classification, the trajectories are segmented and the motion parameters are estimated for each segmented track (longer than 6 frames) using the MSD analysis. It consists of applying a least-square fit from the logarithm form of the MSD power-law equation [@metzler2014]. Both $D$ and $\alpha$ distributions can be plotted in a scatterplot as shown in Figure \autoref{fig:scatterplot}. The new probability transition matrix and proportion of tracklet points in each diffusive state are also calculated.
 
 ![Scatterplot of $D$ and $\alpha$ distributions estimated from the MSD analysis using the segmented trajectories. \label{fig:scatterplot}](fig_toy_example_scatterplot_msd.png)
 
