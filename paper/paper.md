@@ -17,7 +17,7 @@ affiliations:
  - name: Department of Cell Biology, Erasmus University Medical Center, Rotterdam, the Netherlands
    index: 1
 date: 14 March 2023
-bibliography: paper/paper.bib
+bibliography: paper.bib
 ---
 
 # Summary
