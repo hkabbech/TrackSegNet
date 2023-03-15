@@ -22,9 +22,11 @@ bibliography: paper.bib
 
 # Summary
 
-Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021:2021]. When multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule, a typical analysis is the classification and segmentation of the trajectories into diverse diffusive state.
+`TrackSegNet` is a python program to run from command line, which permits the classification and segmentation of trajectories into diffusive states by computing trajectory features which are used as inputs to a supervised deep neural network. After segmentation, `TrackSegNet` further estimates the motion parameters (the diffusion constant $D$ and anomalous exponent $\alpha$) for each segmented track using the mean squared displacement (MSD) analysis. The measured features and resulting segmentation are stored as CSV files which can be useful for subsequent work (probability calculations, generate figures for scientific publication, etc.). Originally developped for the quantification of protein dynamics using single-particle tracking (SPT) experiments, its use can be extended to any type of trajectory dataset.
 
-`TrackSegNet` is a python program to run from command line, which permits the classification and segmentation of trajectories into diffusive states by computing trajectory features which are used as inputs to a supervised deep neural network. After segmentation, `TrackSegNet` further estimates the motion parameters (the diffusion constant $D$ and anomalous exponent $\alpha$) for each segmented track through the mean squared displacement (MSD) analysis [@Metzler:2014]. The measured features and resulting segmentation are stored as CSV files which can be useful for subsequent work (probability calculations, figures for scientific publication, etc.). Originally developped for the quantification of protein dynamics using single-particle tracking (SPT) experiments, its use can be extended to any type of trajectory dataset.
+# Statment of need
+
+Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021:2021]. A typical analysis is the classification and segmentation of trajectories into diverse diffusive state, when multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule (e.g., protein bound/unbound to the DNA).
 
 
 # Method
@@ -87,7 +89,7 @@ The major improvements include:
 
 # Acknowledgements
 
-I would like to thanks Selçuk Yavuz and Martin van Royen for sharing SPT dataset, Maarten W. Paul for testing the software and fixing minor mistakes. This work was supported by the Dutch Research Council (NWO) through the Building Blocks of Life research program (GENOMETRACK project, Grant No. 737.016.014). 
+I would like to thanks Selçuk Yavuz and Martin van Royen for sharing SPT data used as a toy example, Maarten W. Paul for testing the software and fixing minor mistakes. This work was supported by the Dutch Research Council (NWO) through the Building Blocks of Life research program (GENOMETRACK project, Grant No. 737.016.014). 
 
 
 # References
