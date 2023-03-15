@@ -45,7 +45,7 @@ The computed features along a given trajectory are: the displacements $\Delta x_
 
 ## Training
 
-The network is trained using synthetic fractional Brownian motion (fBm) trajectories of mixed diffusive states. For this purpose, 10,000 fBm trajectories with a switching mode between states and a total length of 27 frames are generated for each training. The fBm process is characterized using the fBm kernel [@lundahl1986] defined as $k_{\text{FBM}}(t) = D\left\[\ \lvert t+1\rvert^\alpha  - 2 \lvert t\rvert^\alpha + \lvert t-1\rvert^\alpha\right\]$, with $t=\Delta t / \delta$ ($\Delta t$ the time measured between two frames) and the pre-defined motion parameters $m = (D, \alpha)$.
+The network is trained using synthetic fractional Brownian motion (fBm) trajectories of mixed diffusive states. For this purpose, 10,000 fBm trajectories with a switching mode between states and a total length of 27 frames are generated for each training. The fBm process is characterized using the fBm kernel [@lundahl1986] defined as $k_{\text{FBM}}(t) = D\left[\ \lvert t+1\rvert^\alpha  - 2 \lvert t\rvert^\alpha + \lvert t-1\rvert^\alpha\right]$, with $t=\Delta t / \delta$ ($\Delta t$ the time measured between two frames) and the pre-defined motion parameters $m = (D, \alpha)$.
 
 The model is optimized using `Adam` during the training and a categorical cross-entropy loss function.
 
