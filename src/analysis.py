@@ -120,6 +120,7 @@ def compute_all_msd(tracklet_lists, parms):
 
 def plot_scatter_alpha_diffusion(motion_parms, parms):
     """Make a scatter plot of both the alpha and diffusion distributions."""
+    print('\ncentroids...')
     func = None
     for state in range(parms['num_states']):
         col = parms['colors'][state]
@@ -130,25 +131,26 @@ def plot_scatter_alpha_diffusion(motion_parms, parms):
         if func is None:
             func = sns.JointGrid(x='x', y='y', data=dataframe, height=6.5)
             axs = func.ax_joint
-        tmp_alpha = np.array(motion_parms[state]['alpha'])
         tmp_diff = np.array(motion_parms[state]['diffusion'])
-        axs.scatter(tmp_diff, tmp_alpha, alpha=0.7, color=col, edgecolor='none', s=2)
-        # s=0.3
-        centroid = {'diffusion': np.median(tmp_diff),
-                    'alpha': np.median(tmp_alpha)}
+        tmp_alpha = np.array(motion_parms[state]['alpha'])
+        tmp_diff = tmp_diff[tmp_alpha>=0]
+        tmp_alpha = tmp_alpha[tmp_alpha>=0]
+        axs.scatter(tmp_diff, tmp_alpha, alpha=0.6, color=col, edgecolor='none', s=2)
+        centroid = {'diffusion': np.median(tmp_diff), 'alpha': np.median(tmp_alpha)}
+        print(f"state {state+1}: alpha = {centroid['alpha']:>4.2f}, D = {centroid['diffusion']:>4.2f} µm²/s")
         axs.plot(centroid['diffusion'], centroid['alpha'], 'o', color='0.1', alpha=1, ms=3)
         axs.plot(centroid['diffusion'], centroid['alpha'], 'o', color='0.1', alpha=1, ms=1, mew=8)
         # bins=150, bins=200)
         bins = np.logspace(-2.5, 1.5, 200)
-        sns.histplot(x=tmp_diff, color=col, ax=func.ax_marg_x, alpha=0.5, bins=bins, stat='probability')
+        sns.histplot(x=tmp_diff, color=col, ax=func.ax_marg_x, alpha=0.5, bins=bins, stat='count')
         bins = np.linspace(0, 2, 100)
-        sns.histplot(y=tmp_alpha, color=col, ax=func.ax_marg_y, alpha=0.5, bins=bins, stat='probability')
+        sns.histplot(y=tmp_alpha, color=col, ax=func.ax_marg_y, alpha=0.5, bins=bins, stat='count')
     axs.set_xscale('log')
     axs.set_xlabel(r'$\mathrm{D}$ $[\mu m^2/s]$')
     axs.set_ylabel(r'$\mathrm{\alpha}$')
     func.ax_marg_x.grid(axis='x', alpha=0.5)
     func.ax_marg_y.grid(axis='y', alpha=0.5)
-    axs.set_xlim([10**-2.5, 10**1.5])
+    axs.set_xlim([10**-2, 10**0.5])
     axs.set_ylim([0, 2])
     axs.grid(alpha=0.5)
     fig = plt.gcf()

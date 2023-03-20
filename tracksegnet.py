@@ -11,6 +11,7 @@
 
 # Third-party modules
 import os
+import sys
 from pathlib import Path
 from datetime import datetime
 import numpy as np
@@ -29,7 +30,7 @@ if __name__ == "__main__":
 
     START_TIME = datetime.now()
 
-    PARMS_FILENAME = sys.argv[0]
+    PARMS_FILENAME = sys.argv[-1]
     # PARMS_FILENAME = 'parms.csv'
     PARMS_DF = pd.read_csv(PARMS_FILENAME, sep='\t').set_index('parms').squeeze().to_dict()
     PARMS_DF = check_parms(PARMS_DF)
@@ -58,7 +59,6 @@ if __name__ == "__main__":
         'length_threshold': 6,
 
         ## Trajectory simulation:
-        'n_dim': 2, # X and Y coordinates => 2 dimensions
         'track_length_fixed': True,
         'track_length': 27,
         'num_simulate_tracks': 10000,
@@ -66,10 +66,7 @@ if __name__ == "__main__":
         'ptm': np.array([[PARMS_DF[f'pt_{state1}_{state2}'] for state1 in range(1, NSTATES+1)]\
                         for state2 in range(1, NSTATES+1)]),
         'min_frames':4, # Minimal amount of frames
-        'min_frames_in_same_state':4, # Minimal amount of frames for particles remaining in a state
         'beta':100, # Mean of exponential distribution for length tracks
-        'num_interval':10, # Parameter for retricted motion
-        'motion':20, # Parameter for retricted motion
 
         ## Parameters to generate the LSTM model:
         'num_features': 6,

@@ -37,7 +37,7 @@ python -m pip install -r requirements.txt
 
 ### Data organization
 
-Organize your data in a folder `SPT_experiment`, each sub-folder should contain a file containing the trajectories in a `MDF` or `CSV` file format.
+Organize your data in a folder `SPT_experiment`, each sub-folder should contain a file storing the trajectory coordinates in a `MDF` or `CSV` file format.
 
 If `CSV` format is used, the headers should be: `x, y, frame, track_id`
 
@@ -68,11 +68,13 @@ If `CSV` format is used, the headers should be: `x, y, frame, track_id`
 Update the main parameters in the `parms.csv` file according to your experiment:
 
 - `data_path`: the path containing your data folder `SPT_experiment` to analyze
-- `time_frame`: the time between two frames (in second)
-- `pixel_size`: the size of a pixel (in µm)
+- `track_format`: The format of the files containing the trajectory coordinates, should be `MDF` or `CSV`
+- `time_frame`: the time interval between two trajectory points (in second)
+- `pixel_size`: the dimension of a pixel (in µm)
 - `num_states`: the number of diffusive states for the classification(from 2 to 6 states)
 - `state_X_diff`: The expected diffusion value for state X (in µm^2/s).
-- `state_X_alpha`: The expected anomalous exponent α value for state X (from 0 to 2 -- [0-1[: subdiffusion, 1: Brownian motion, ]1-2]: superdiffusion).
+- `state_X_alpha`: The expected anomalous exponent α value for state X (from 0 to 2 -- ]0-1[: subdiffusion, 1: Brownian motion, ]1-2[: superdiffusion).
+- `pt_i_j`: the probability of transitionning from the state i to the state j. The total number of probabilities should be $N^2$.
 
 Note that the program will run on the toy example if the parameters are unchanged.
 
@@ -82,7 +84,7 @@ For updating the parameters of the track simulation and neural network training,
 ## Run the program
 
 ```
-python tracksegnet.py parms.csv
+./tracksegnet.py parms.csv
 ```
 
 ## Reference
