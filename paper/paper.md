@@ -24,11 +24,11 @@ bibliography: paper.bib
 
 `TrackSegNet` is a python program to run from command line, which permits the classification and segmentation of trajectories into diffusive states by computing trajectory features which are used as inputs to a supervised deep neural network. After segmentation, `TrackSegNet` further estimates the motion parameters (the diffusion constant $D$ and anomalous exponent $\alpha$) for each segmented track using the mean squared displacement (MSD) analysis. The measured features and resulting segmentation are stored as CSV files which can be useful for subsequent work (e.g., probability calculations, generate figures for scientific publication). Originally developped for the quantification of protein dynamics using single-particle tracking (SPT) experiments, its use can be extended to any type of trajectory dataset.
 
+![Analysis pipeline of TrackSegNet described in two steps. \label{fig:pipeline}](pipeline.png)
+
 # Statement of need
 
 Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021]. A typical analysis is the classification and segmentation of trajectories into diverse diffusive states when multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule (e.g., protein bound/unbound to the DNA). A few trajectory classification methods have recently been developed by the community, among which we can cite @wagner2017, @hansen2018, @arts2019, @pinholt2021 and @kabbech2022. However, more practical analysis software is needed for direct application use.
-
-![Analysis pipeline of TrackSegNet described in two steps. \label{fig:pipeline}](pipeline.png)
 
 
 # Method
