@@ -4,6 +4,9 @@
 
 Trajectory segmentation into diffusive states using LSTM neural network.
 
+
+!(paper/pipeline.png)
+
 ## Installation and requirements
 
 ### Clone the repository

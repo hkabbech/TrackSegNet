@@ -156,7 +156,7 @@ def plot_scatter_alpha_diffusion(motion_parms, parms):
     fig = plt.gcf()
     fig.suptitle(f"{parms['data_path'].name} dataset")
     fig.tight_layout()
-    fig.subplots_adjust(wspace=0.1)
+    fig.subplots_adjust(wspace=0, hspace=0)
     plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_scatterplot_msd.{parms['fig_format']}",
                 dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
     plt.show()

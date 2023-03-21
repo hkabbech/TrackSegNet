@@ -26,12 +26,12 @@ bibliography: paper.bib
 
 # Statement of need
 
-Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021]. A typical analysis is the classification and segmentation of trajectories into diverse diffusive states when multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule (e.g., protein bound/unbound to the DNA).
+Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021]. A typical analysis is the classification and segmentation of trajectories into diverse diffusive states when multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule (e.g., protein bound/unbound to the DNA). A few trajectory classification methods have recently been developed by the community, among which we can cite @wagner2017, @hansen2018, @arts2019, @pinholt2021 and @kabbech2022. However, more practical analysis software is needed for direct application use.
 
 
 # Method
 
-This software is based on the method of @arts2019 with slight improvements, and allows replicability on other datasets.
+This software is based on the method of @arts2019 with slight improvements and allows replicability on other datasets.
 
 ## Neural Network
 
@@ -67,13 +67,14 @@ The remaining parameters are related to the experimental dataset:
 
 ## Classification and MSD analysis
 
-Before computing the features for each experimental trajectory, gaps in trajectories of length 1 are filled by a randomly generated point; while the larger gaps are split in two separate trajectories. Each point is therefore classified as one of the $N$ diffusive states using the trained LSTM model. Based on the state classification, the trajectories are segmented and the motion parameters are estimated for each segmented track (longer than 5 frames) using the MSD analysis. The latter consists of applying a least-square fit from the logarithm form of the MSD power-law equation [@metzler2014]. Both $D$ and $\alpha$ distributions can be plotted in a scatterplot as shown in Figure \autoref{fig:scatterplot}. The new probability transition matrix and proportion of tracklet points in each diffusive state are also calculated.
+Before computing the features for each experimental trajectory, gaps in trajectories of length 1 are filled by a randomly generated point; while the larger gaps are split in two separate trajectories. Each point is therefore classified as one of the $N$ diffusive states using the trained LSTM model. Based on the state classification, the trajectories are segmented and the motion parameters are estimated for each segmented track (longer than 5 frames) using the MSD analysis. The latter consists of applying a least-square fit from the logarithm form of the MSD power-law equation [@metzler2014]. Both $D$ and $\alpha$ distributions can be plotted in a scatterplot as shown in Figure \autoref{fig:pipeline}. The new probability transition matrix and proportion of tracklet points in each diffusive state are also calculated.
 
-![Scatterplot of $D$ and $\alpha$ distributions estimated from the MSD analysis using the segmented trajectories. \label{fig:scatterplot}](fig_toy_example_scatterplot_msd.png)
+![Analysis pipeline of TrackSegNet described in two steps: Trajectory segmentation using a trained model, followed by the MSD analysis. \label{fig:pipeline}](pipeline.png)
+
 
 # Acknowledgements
 
-I would like to thanks Selçuk Yavuz and Martin E. van Royen for sharing SPT data used as a toy example, Maarten W. Paul for testing the software and fixing minor mistakes. This work was supported by the Dutch Research Council (NWO) through the Building Blocks of Life research program (GENOMETRACK project, Grant No. 737.016.014).
+I would like to thanks Selçuk Yavuz and Martin E. van Royen for sharing SPT data used as a toy example, Maarten W. Paul for testing the software and fixing minor mistakes. Figure \autoref{fig:scatterplot} was partially created using Biorender. This work was supported by the Dutch Research Council (NWO) through the Building Blocks of Life research program (GENOMETRACK project, Grant No. 737.016.014).
 
 
 # References
