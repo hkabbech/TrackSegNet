@@ -67,14 +67,14 @@ The remaining parameters are related to the experimental dataset:
 
 ## Classification and MSD analysis
 
-Before computing the features for each experimental trajectory, gaps in trajectories of length 1 are filled by a randomly generated point; while the larger gaps are split in two separate trajectories. Each point is therefore classified as one of the $N$ diffusive states using the trained LSTM model. Based on the state classification, the trajectories are segmented and the motion parameters are estimated for each segmented track (longer than 5 frames) using the MSD analysis. The latter consists of applying a least-square fit from the logarithm form of the MSD power-law equation [@metzler2014]. Both $D$ and $\alpha$ distributions can be plotted in a scatterplot as shown in Figure \autoref{fig:pipeline}. The new probability transition matrix and proportion of tracklet points in each diffusive state are also calculated.
+Before computing the features for each experimental trajectory, gaps in trajectories of length 1 are filled by a randomly generated point; while the larger gaps are split in two separate trajectories. Each point is therefore classified as one of the $N$ diffusive states using the trained LSTM model. Based on the state classification, the trajectories are segmented and the motion parameters are estimated for each segmented track (longer than 5 frames) using the MSD analysis. The latter consists of applying a least-square fit from the logarithm form of the MSD power-law equation [@metzler2014]. Both $D$ and $\alpha$ distributions can be plotted in a scatterplot as shown in \autoref{fig:pipeline}. The new probability transition matrix and proportion of tracklet points in each diffusive state are also calculated.
 
-![Analysis pipeline of TrackSegNet described in two steps: Trajectory segmentation using a trained model, followed by the MSD analysis. \label{fig:pipeline}](pipeline.png)
+![Analysis pipeline of TrackSegNet described in two steps. \label{fig:pipeline}](pipeline.png)
 
 
 # Acknowledgements
 
-I would like to thanks Selçuk Yavuz and Martin E. van Royen for sharing SPT data used as a toy example, Maarten W. Paul for testing the software and fixing minor mistakes. Figure \autoref{fig:scatterplot} was partially created using Biorender. This work was supported by the Dutch Research Council (NWO) through the Building Blocks of Life research program (GENOMETRACK project, Grant No. 737.016.014).
+I would like to thanks Selçuk Yavuz and Martin E. van Royen for sharing SPT data used as a toy example, Maarten W. Paul for testing the software and fixing minor mistakes. \autoref{fig:pipeline} was partially created using Biorender. This work was supported by the Dutch Research Council (NWO) through the Building Blocks of Life research program (GENOMETRACK project, Grant No. 737.016.014).
 
 
 # References
