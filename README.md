@@ -1,4 +1,7 @@
-![Python version](https://img.shields.io/badge/python-3.8-brightgreen.svg)
+![Python version](https://img.shields.io/badge/python-3.8-brightgreen.svg) 
+
+[![DOI](https://zenodo.org/badge/583738628.svg)](https://zenodo.org/badge/latestdoi/583738628)
+
 
 # TrackSegNet
 
