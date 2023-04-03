@@ -1,5 +1,5 @@
 ---
-title: 'TrackSegNet: a tool for trajectory segmentation into diffusive states using supervised deep learning.'
+title: 'TrackSegNet: a tool for trajectory segmentation into diffusive states using supervised deep learning'
 tags:
   - Python
   - single-particle tracking
@@ -22,18 +22,18 @@ bibliography: paper.bib
 
 # Summary
 
-`TrackSegNet` is a python program to run from command line, which permits the classification and segmentation of trajectories into diffusive states by computing trajectory features which are used as inputs to a supervised deep neural network. After segmentation, `TrackSegNet` further estimates the motion parameters (the diffusion constant $D$ and anomalous exponent $\alpha$) for each segmented track using the mean squared displacement (MSD) analysis. The measured features and resulting segmentation are stored as CSV files which can be useful for subsequent work (e.g., probability calculations, generate figures for scientific publication). Originally developped for the quantification of protein dynamics using single-particle tracking (SPT) experiments, its use can be extended to any type of trajectory dataset.
+`TrackSegNet` is a command-line python program, which permits the classification and segmentation of trajectories into diffusive states by computing trajectory features which are used as inputs to a supervised deep neural network. After segmentation, `TrackSegNet` further estimates the motion parameters (the diffusion constant $D$ and anomalous exponent $\alpha$) for each segmented track using the mean squared displacement (MSD) analysis. The measured features and resulting segmentation are stored as CSV files which can be useful for subsequent work probability calculations, generate figures for scientific publication, etc.). Originally developped for the quantification of protein dynamics using experiments of single-particle tracking imaging, its use can be extended to any type of trajectory dataset.
 
 ![Analysis pipeline of TrackSegNet described in two steps. \label{fig:pipeline}](pipeline.png)
 
 # Statement of need
 
-Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021]. A typical analysis is the classification and segmentation of trajectories into diverse diffusive states when multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule (e.g., protein bound/unbound to the DNA). A few trajectory classification methods have recently been developed by the community, among which we can cite @wagner2017, @hansen2018, @arts2019, @pinholt2021 and @kabbech2022. However, more practical analysis software is needed for direct application use.
+Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary [@munoz2021]. A typical analysis is the classification and segmentation of trajectories into diverse diffusive states when multiple types of motion are present in a dataset (e.g., confined, superdiffusive) due to the properties of the labeled molecule (e.g., protein bound/unbound to the DNA). A few trajectory classification methods have recently been developed by the community, among which can be cited @wagner2017, @hansen2018, @arts2019, @pinholt2021 and @kabbech2022. However, more practical analysis software is needed for direct application use.
 
 
 # Method
 
-This software is based on the method of @arts2019 with slight improvements and allows replicability on other datasets.
+This software is based on the method of @arts2019 with major improvements and allows replicability on other datasets.
 
 ## Neural Network
 
@@ -74,7 +74,7 @@ Before computing the features for each experimental trajectory, gaps in trajecto
 
 # Acknowledgements
 
-I would like to thanks Selçuk Yavuz and Martin E. van Royen for sharing SPT data used as a toy example, Maarten W. Paul for testing the software and fixing minor mistakes. \autoref{fig:pipeline} was partially created using Biorender. This work was supported by the Dutch Research Council (NWO) through the Building Blocks of Life research program (GENOMETRACK project, Grant No. 737.016.014).
+We would like to thanks Selçuk Yavuz and Martin E. van Royen for sharing SPT data used as a toy example, and Maarten W. Paul for testing the software and fixing minor mistakes. \autoref{fig:pipeline} was partially created using Biorender. This work was supported by the Dutch Research Council (NWO) through the Building Blocks of Life research program (GENOMETRACK project, Grant No. 737.016.014).
 
 
 # References
