@@ -8,9 +8,18 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from scipy.optimize import curve_fit
+import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
+import matplotlib.cm as cm
 import seaborn as sns
 
+matplotlib.rcParams.update({
+    'font.size': 12,
+    'axes.labelsize': 13,
+    'figure.labelsize': 13,
+    'mathtext.fontset': 'dejavusans'
+})
 
 def convert_sigma(diffusion, parms):
     """Convert diffusion to sigma value."""
@@ -104,7 +113,8 @@ def compute_msd(track, size, dim=2):
 def compute_all_msd(tracklet_lists, parms):
     """Compute the MSD for each given track."""
     print('\nCompute MSD...')
-    motion_parms = [{'alpha': [], 'diffusion': [], 'track_id': []} for _ in range(parms['num_states'])]
+    motion_parms = [{'alpha': [], 'diffusion': [], 'track_id': []}\
+                    for _ in range(parms['num_states'])]
     for state in tqdm(range(parms['num_states'])):
         for tracklet in tracklet_lists[state]:
             if len(tracklet) >= parms['length_threshold']:
@@ -115,12 +125,14 @@ def compute_all_msd(tracklet_lists, parms):
                 motion_parms[state]['alpha'].append(alpha)
                 motion_parms[state]['diffusion'].append(diffusion)
                 motion_parms[state]['track_id'].append(tracklet['track_id'].iloc[0])
-        pd.DataFrame(motion_parms[state]).to_csv(parms['result_path']/f"motion_parms_state_{state+1}.csv", index=False)
+        pd.DataFrame(motion_parms[state]).to_csv(
+            parms['result_path']/f"motion_parms_state_{state+1}.csv", index=False)
     return motion_parms
 
 def plot_scatter_alpha_diffusion(motion_parms, parms):
     """Make a scatter plot of both the alpha and diffusion distributions."""
-    print('\ncentroids...')
+    print(f'\nPlot D/alpha scatterplot...')
+    print('centroids...')
     func = None
     for state in range(parms['num_states']):
         col = parms['colors'][state]
@@ -133,11 +145,12 @@ def plot_scatter_alpha_diffusion(motion_parms, parms):
             axs = func.ax_joint
         tmp_diff = np.array(motion_parms[state]['diffusion'])
         tmp_alpha = np.array(motion_parms[state]['alpha'])
-        tmp_diff = tmp_diff[tmp_alpha>=0]
-        tmp_alpha = tmp_alpha[tmp_alpha>=0]
+        tmp_diff = tmp_diff[tmp_alpha >= 0]
+        tmp_alpha = tmp_alpha[tmp_alpha >= 0]
         axs.scatter(tmp_diff, tmp_alpha, alpha=0.6, color=col, edgecolor='none', s=2)
         centroid = {'diffusion': np.median(tmp_diff), 'alpha': np.median(tmp_alpha)}
-        print(f"state {state+1}: alpha = {centroid['alpha']:>4.2f}, D = {centroid['diffusion']:>4.2f} µm²/s")
+        print(f"state {state+1}: alpha = {centroid['alpha']:>4.2f},", end=" ")
+        print(f"D = {centroid['diffusion']:>4.2f} µm²/s")
         axs.plot(centroid['diffusion'], centroid['alpha'], 'o', color='0.1', alpha=1, ms=3)
         axs.plot(centroid['diffusion'], centroid['alpha'], 'o', color='0.1', alpha=1, ms=1, mew=8)
         # bins=150, bins=200)
@@ -154,23 +167,232 @@ def plot_scatter_alpha_diffusion(motion_parms, parms):
     axs.set_ylim([0, 2])
     axs.grid(alpha=0.5)
     fig = plt.gcf()
-    fig.suptitle(f"{parms['data_path'].name} dataset")
+    # fig.suptitle(f"{parms['data_path'].name} dataset")
     fig.tight_layout()
     fig.subplots_adjust(wspace=0, hspace=0)
-    plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_scatterplot_msd.{parms['fig_format']}",
+    plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_scatterplot_msd"+\
+                f".{parms['fig_format']}",
                 dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
     plt.show()
 
 def plot_proportion(tracklet_lists, parms):
-    """Plot pie chart proportion of tracklets in each diffusive state"""
+    """Plot pie chart proportion of tracklets in each diffusive state."""
+    print('\nPlot proportion...')
     tracklet_num = [len(tracklet_list) for tracklet_list in tracklet_lists]
     print(tracklet_num)
-    labels = [f'state {state+1}\nn = {len(tracklet_list)}' for state, tracklet_list in enumerate(tracklet_lists)]
-    fig, axs = plt.subplots()
-    axs.pie(tracklet_num, labels=labels, autopct='%1.1f%%', colors=parms['colors'])
+    labels = [f'state {state+1}\nn = {len(tracklet_list)}'\
+              for state, tracklet_list in enumerate(tracklet_lists)]
+    fig, axs = plt.subplots(1, figsize=(4, 4))
+    axs.pie(tracklet_num, labels=labels, autopct='%1.1f%%', colors=parms['colors'], wedgeprops={"alpha": 0.6})
     axs.axis('equal')
     fig.suptitle(f"{parms['data_path'].name} dataset")
     fig.tight_layout()
-    plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_tracklet_proportion.{parms['fig_format']}",
+    plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_tracklet_proportion."+\
+                f"{parms['fig_format']}",
+                dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
+    plt.show()
+
+def compute_displ(tracklet_lists, parms, dtime=1):
+    """Compute displacements for each tracklet state."""
+    all_displ_tracklet = [{dtime: None} for _ in range(len(tracklet_lists))]
+    for state in tqdm(range(parms['num_states'])):
+        for tracklet in tracklet_lists[state]:
+            displ_x = tracklet[dtime:].reset_index(drop=True)['x']-\
+                tracklet.reset_index(drop=True)['x']
+            displ_x = displ_x.to_numpy().astype(np.float64)
+            displ_y = tracklet[dtime:].reset_index(drop=True)['y']-\
+                tracklet.reset_index(drop=True)['y']
+            displ_y = displ_y.to_numpy().astype(np.float64)
+            if all_displ_tracklet[state][dtime] is None:
+                all_displ_tracklet[state][dtime] = {'x': displ_x, 'y': displ_y}
+            else:
+                all_displ_tracklet[state][dtime]['x'] = np.append(
+                    all_displ_tracklet[state][dtime]['x'], displ_x)
+                all_displ_tracklet[state][dtime]['y'] = np.append(
+                    all_displ_tracklet[state][dtime]['y'], displ_y)
+
+        all_displ_tracklet[state][dtime]['x'] = all_displ_tracklet[state][dtime]['x']\
+            [~np.isnan(all_displ_tracklet[state][dtime]['x'])]*parms['pixel_size']
+        all_displ_tracklet[state][dtime]['y'] = all_displ_tracklet[state]\
+            [dtime]['y'][~np.isnan(all_displ_tracklet[state][dtime]['y'])]*parms['pixel_size']
+    return all_displ_tracklet
+
+def plot_displ(tracklet_lists, parms, dtime=1):
+    """Plot distribution of displacements per tracklet state."""
+    print(f'\nPlot displacements with dt={dtime}...')
+    all_displ_tracklet = compute_displ(tracklet_lists, parms, dtime=dtime)
+
+    plt.close()
+    hist = {}
+    for state, _ in enumerate(all_displ_tracklet):
+        displ_tmp = np.concatenate((all_displ_tracklet[state][dtime]['x'],
+                                    all_displ_tracklet[state][dtime]['y']))
+        binwidth = 0.02
+        bins = np.arange(-0.4-0.01, 0.4 + binwidth, binwidth)
+        sns.histplot(displ_tmp, bins=bins, stat='density')
+        bars = plt.gca().patches[0]
+        xy_coords = np.array([[bars.get_x()+(bars.get_width()/2), bars.get_height()]\
+                      for bars in plt.gca().patches]).T
+        hist[state] = xy_coords
+        plt.close()
+
+    fig, axs = plt.subplots(1, figsize=(5, 5))
+    axs.grid(alpha=0.5)
+
+    for state, _ in enumerate(all_displ_tracklet):
+        axs.plot(hist[state][0], hist[state][1], 'o-', color=parms['colors'][state],
+                 label=f'state {state+1}', ms=5.5, lw=1)
+    axs.set_ylabel('Probability Density')
+    axs.set_xlabel(r'$\mathrm{\Delta r}$ $[\mu m]$')
+    axs.set_title('Distribution of X and Y displacements')
+    axs.legend(loc='upper left')
+    fig.tight_layout()
+    plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_displ"+\
+                f".{parms['fig_format']}",
+                dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
+    plt.show()
+
+def compute_angles(tracklet_lists, parms, dtime=1):
+    """Calculate list of angles for each tracklet state."""
+    tracklet_angles = {}
+    for state in tqdm(range(parms['num_states'])):
+        angles_current_state = np.array([])
+        for tracklet in tracklet_lists[state]:
+            displ_x = tracklet[dtime:].reset_index()['x']-tracklet.reset_index()['x']
+            displ_x = displ_x.to_numpy().astype(np.float64)
+            displ_y = tracklet[dtime:].reset_index()['y']-tracklet.reset_index()['y']
+            displ_y = displ_y.to_numpy().astype(np.float64)
+            # calulate angles
+            alpha_1 = np.arctan2(displ_y[:-1], displ_x[:-1])
+            alpha_2 = np.arctan2(displ_y[1:], displ_x[1:]) + 2*np.pi
+            angles = (alpha_2 - alpha_1) % (2*np.pi)
+            angles[angles > np.pi] = angles[angles > np.pi] - (2*np.pi)
+            angles = angles[~np.isnan(angles)]
+            angles_current_state = np.append(angles_current_state, angles)
+        tracklet_angles[state] = angles_current_state
+    return tracklet_angles
+
+def calculate_fold_180_0(angle_list):
+    """Calculate fold anisotropy for a given list of angles. ref: Hansen et al.
+    Nature chemical biology, 16.3 (2020), https://doi.org/10.1038/s41589-019-0422-3"""
+    num = {'180': 0, '0': 0}
+    for angle in angle_list:
+        # angle = angle + 2*np.pi
+        if ((5*np.pi)/6 <= angle <= np.pi) or (-np.pi <= angle <= (-5*np.pi)/6):
+            num['180'] += 1
+        elif (0 <= angle <= np.pi/6) or (-np.pi/6 <= angle <= 0):
+            num['0'] += 1
+    try:
+        fold_180_0 = num['180'] / num['0']
+    except ZeroDivisionError:
+        fold_180_0 = None
+    return (fold_180_0, (num['180'], num['0']))
+
+def plot_angles(tracklet_lists, parms, dtime=1):
+    """Plot angular distribution per tracklet state."""
+    print(f'\nPlot angles with dt={dtime}...')
+    tracklet_angles = compute_angles(tracklet_lists, parms, dtime=dtime)
+
+    plt.close()
+    hist = {}
+    for state, _ in enumerate(tracklet_angles):
+        sns.histplot(np.array(tracklet_angles[state]), stat='density', bins=25,
+                     color=parms['colors'][state], alpha=0.5)
+        bars = plt.gca().patches[0]
+        xy_coords = np.array([[bars.get_x()+(bars.get_width()/2), bars.get_height()]\
+                      for bars in plt.gca().patches]).T
+        hist[state] = xy_coords
+        plt.close()
+
+    fig, axs = plt.subplots(1, figsize=(5, 5))
+    axs.grid(alpha=0.5)
+
+    formula = r'$\mathrm{f_{180/0}}$'
+    labels = []
+    for state, _ in enumerate(tracklet_lists):
+        axs.plot(hist[state][0], hist[state][1], 'o-', color=parms['colors'][state],
+                 label=f'state {state+1}',
+                 ms=5.5, lw=1)
+        fold = calculate_fold_180_0(tracklet_angles[state])[0]
+        labels.append(mlines.Line2D([], [], color=parms['colors'][state],
+                                    label=f"{formula} = {fold:.2}", lw=1))
+    axs.set_xlim(-np.pi, np.pi)
+    # axs.set_ylim(0.05, 0.30)
+    axs.set_xticks(np.arange(-np.pi, np.pi+0.01, np.pi/2))
+    axs.set_xticklabels([r'$\mathrm{-180^o}$', r'$\mathrm{-90^o}$', r'$\mathrm{0^o}$',
+                         r'$\mathrm{90^o}$', r'$\mathrm{180^o}$'])
+    axs.legend(handles=labels, loc='upper center')
+    axs.set_xlabel(r'$\mathrm{\theta}$')
+    axs.set_ylabel('Probability Density')
+    axs.set_title('Angular distributions')
+    fig.tight_layout()
+    plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_angles"+\
+                f".{parms['fig_format']}",
+                dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
+    plt.show()
+
+def compute_vac(tracklet_lists, parms, dtime=1, thr=1000):
+    """Compute velocity autocorrelation (VAC) curves for each tracklet state."""
+    time_frame_ms = parms['time_frame']*1000
+    all_vac = [{dtime: None} for _ in range(len(tracklet_lists))]
+    for state in tqdm(range(parms['num_states'])):
+        vac_tmp = []
+        for tracklet in tracklet_lists[state]:
+            if len(tracklet) <= dtime:
+                continue
+            xcoord = tracklet['x'].to_numpy()
+            vac_tmp.append(np.dot(((xcoord[dtime:]-xcoord[:-dtime])/dtime)*time_frame_ms,
+                                  ((xcoord[dtime]-xcoord[0])/dtime)*time_frame_ms))
+            ycoord = tracklet['y'].to_numpy()
+            vac_tmp.append(np.dot(((ycoord[dtime:]-ycoord[:-dtime])/dtime)*time_frame_ms,
+                                  ((ycoord[dtime]-ycoord[0])/dtime)*time_frame_ms))
+        vac = np.zeros((len(vac_tmp), thr))
+        vac[:] = np.nan
+        for i, _ in enumerate(vac):
+            vac[i][:len(vac_tmp[i])] = vac_tmp[i][:1000]
+        all_vac[state][dtime] = np.nanmean(vac, axis=0)
+    return all_vac
+
+def plot_vac(tracklet_lists, parms, dtime=1):
+    """Plot velocity autocorrelation curves per tracklet state."""
+    print(f'\nPlot velocity autocorrelation with dt={dtime}...')
+    all_vac = compute_vac(tracklet_lists, parms, dtime=dtime)
+
+    fig, axs = plt.subplots(1, figsize=(5, 5))
+    axs.grid(alpha=0.5)
+    # plot theoretical curves
+    xaxis = np.arange(0, 100)
+    alphas = np.arange(0.1, 1.3, 0.1)
+    cmap = cm.get_cmap("viridis_r")
+    cmap = cmap(np.linspace(0, 1, len(alphas)))
+    thr_prev = None
+    for i, alpha_thr in enumerate(alphas[::-1]):
+        thr = ((xaxis+1)**(alpha_thr) + abs(xaxis-1)**(alpha_thr) - 2*(xaxis**(alpha_thr)))/2
+        if thr_prev is None:
+            thr_prev = thr.copy()
+        else:
+            axs.fill_between(xaxis*parms['time_frame']*1000, thr, thr_prev, facecolor=cmap[i],
+                             alpha=1)
+            thr_prev = thr.copy()
+
+    for state, _ in enumerate(tracklet_lists):
+        x_axis_norm = np.array([i*parms['time_frame']*1000\
+                               for i in range(len(all_vac[state][dtime]))])
+        axs.plot(x_axis_norm, (all_vac[state][dtime]/all_vac[state][dtime][0]), 'o-',
+                 color=parms['colors'][state], lw=1, ms=5.5, label=f'state {state}')
+    axs.set_ylabel(r'$\mathrm{C^{(\delta=1)}_{v}(\Delta t)}$'+\
+                   r'$\mathrm{/}$ $\mathrm{C^{(\delta=1)}_{v}(0)}$')
+    axs.set_xlabel(r'$\mathrm{\Delta t}$')#' $[ms]$')
+    axs.set_xlim([0, 30])
+    axs.set_xticks(np.arange(0, parms['time_frame']*1000*5, parms['time_frame']*1000))
+    axs.set_ylim([-0.5, 1])
+    # axs.legend(loc='upper right', fontsize='x-small')
+    thr_curves = plt.contourf([[0, 0], [0, 0]], alphas, cmap='viridis')
+    fig.colorbar(thr_curves, ax=axs, ticks=alphas).\
+                 set_label(label=r'$\mathrm{\alpha}$ value of theoretical fBm')
+    axs.set_title('Velocity autocorrelation curves')
+    fig.tight_layout()
+    plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_vac"+\
+                f".{parms['fig_format']}",
                 dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
     plt.show()

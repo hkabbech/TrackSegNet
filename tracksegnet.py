@@ -24,7 +24,7 @@ from src.simulate_tracks import run_track_simulation
 from src.experimental_tracks import extract_all_tracks, predict_states
 from src.generate_lstm_model import generate_lstm_model
 from src.analysis import compute_ptm, make_tracklet_lists, compute_all_msd,\
-    plot_scatter_alpha_diffusion
+    plot_scatter_alpha_diffusion, plot_proportion, plot_displ, plot_angles, plot_vac
 
 if __name__ == "__main__":
 
@@ -140,10 +140,15 @@ if __name__ == "__main__":
         PTM = pd.read_csv(PTM_CSV)
     print(PTM)
 
+    TRACKLET_LISTS = make_tracklet_lists(TRACK_DF, PARMS)
+
     if not os.path.isfile(PARMS['result_path']/"motion_parms_state_1.csv"):
-        TRACKLET_LISTS = make_tracklet_lists(TRACK_DF, PARMS)
         MOTION_PARMS = compute_all_msd(TRACKLET_LISTS, PARMS)
     else:
         MOTION_PARMS = [pd.read_csv(PARMS['result_path']/f"motion_parms_state_{state+1}.csv") for state in range(PARMS['num_states'])]
 
+    plot_proportion(TRACKLET_LISTS, PARMS)
     plot_scatter_alpha_diffusion(MOTION_PARMS, PARMS)
+    plot_displ(TRACKLET_LISTS, PARMS)
+    plot_angles(TRACKLET_LISTS, PARMS)
+    plot_vac(TRACKLET_LISTS, PARMS)
