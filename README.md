@@ -16,26 +16,15 @@ git clone https://github.com/hkabbech/TrackSegNet.git
 cd TrackSegNet
 ```
 
-### Activate the python environment
-
-On Unix or MacOS, run:
-```
-source tracksegnet-env/bin/activate
-```
-On Windows, run:
-```
-tracksegnet-env\bin\activate
-```
-Note, to deactivate the virtual environment, type `deactivate`
-
-### Or Create the environment and install the packages
+### Create the environment and install the packages
 
 ```
-pip3 install virtualenv
+sudo apt install python3-virtualenv
 virtualenv -p /usr/bin/python3 tracksegnet-env
 source tracksegnet-env/bin/activate # for Windows: tracksegnet-env\bin\activate
 python -m pip install -r requirements.txt
 ```
+Note, to deactivate the virtual environment, type `deactivate`
 
 ## Prepare your data
 
