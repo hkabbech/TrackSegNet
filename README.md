@@ -80,5 +80,5 @@ For updating the parameters of the track simulation and neural network training,
 
 ## Reference
 
-Arts, M., Smal, I., Paul, M. W., Wyman, C., & Meijering, E. (2019).
-**Particle Mobility Analysis Using Deep Learning and the Moment Scaling Spectrum.** _Scientific Reports_, 9(1), 17160. [https://doi.org/10.1038/s41598-019-53663-8](https://doi.org/10.1038/s41598-019-53663-8).
+Yavuz, S., Kabbech, H., van Staalduinen, J., Linder, S., van Cappellen, W.A., Nigg, A.L., Abraham, T.E., Slotman, J.A., Quevedo, M. Poot, R.A., Zwart, W., van Royen, M.E., Grosveld, F.G., Smal, I., Houtsmuller, A.B. (2023) Compartmentalization of androgen receptors at endogenous genes in living cells, Nucleic Acids Research, [https://doi.org/10.1093/nar/gkad803](https://doi.org/10.1093/nar/gkad803). 
+
