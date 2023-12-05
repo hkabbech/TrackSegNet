@@ -173,7 +173,7 @@ def plot_scatter_alpha_diffusion(motion_parms, parms):
     plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_scatterplot_msd"+\
                 f".{parms['fig_format']}",
                 dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
-    plt.show()
+    plt.close()
 
 def plot_proportion(tracklet_lists, parms):
     """Plot pie chart proportion of tracklets in each diffusive state."""
@@ -190,7 +190,7 @@ def plot_proportion(tracklet_lists, parms):
     plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_tracklet_proportion."+\
                 f"{parms['fig_format']}",
                 dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
-    plt.show()
+    plt.close()
 
 def compute_displ(tracklet_lists, parms, dtime=1):
     """Compute displacements for each tracklet state."""
@@ -250,7 +250,7 @@ def plot_displ(tracklet_lists, parms, dtime=1):
     plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_displ"+\
                 f".{parms['fig_format']}",
                 dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
-    plt.show()
+    plt.close()
 
 def compute_angles(tracklet_lists, parms, dtime=1):
     """Calculate list of angles for each tracklet state."""
@@ -329,7 +329,7 @@ def plot_angles(tracklet_lists, parms, dtime=1):
     plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_angles"+\
                 f".{parms['fig_format']}",
                 dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
-    plt.show()
+    plt.close()
 
 def compute_vac(tracklet_lists, parms, dtime=1, thr=1000):
     """Compute velocity autocorrelation (VAC) curves for each tracklet state."""
@@ -395,4 +395,4 @@ def plot_vac(tracklet_lists, parms, dtime=1):
     plt.savefig(f"{parms['result_path']}/fig_{parms['data_path'].name}_vac"+\
                 f".{parms['fig_format']}",
                 dpi=parms['fig_dpi'], transparent=parms['fig_transparent'])
-    plt.show()
+    plt.close()
