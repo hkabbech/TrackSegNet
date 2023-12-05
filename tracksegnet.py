@@ -56,7 +56,7 @@ if __name__ == "__main__":
         } for state in range(1, NSTATES+1)],
 
         ## Restrictions on the track length:
-        'length_threshold': 6,
+        'length_threshold': 14,
 
         ## Trajectory simulation:
         'track_length_fixed': True,
@@ -65,7 +65,6 @@ if __name__ == "__main__":
         # transition probabilities
         'ptm': np.array([[PARMS_DF[f'pt_{state1}_{state2}'] for state1 in range(1, NSTATES+1)]\
                         for state2 in range(1, NSTATES+1)]),
-        'min_frames':4, # Minimal amount of frames
         'beta':100, # Mean of exponential distribution for length tracks
 
         ## Parameters to generate the LSTM model:
@@ -140,11 +139,11 @@ if __name__ == "__main__":
         PTM = pd.read_csv(PTM_CSV)
     print(PTM)
 
-    TRACKLET_LISTS = make_tracklet_lists(TRACK_DF, PARMS)
-
     if not os.path.isfile(PARMS['result_path']/"motion_parms_state_1.csv"):
+        TRACKLET_LISTS = make_tracklet_lists(TRACK_DF, PARMS)
         MOTION_PARMS = compute_all_msd(TRACKLET_LISTS, PARMS)
     else:
+        TRACKLET_LISTS = make_tracklet_lists(TRACK_DF, PARMS)
         MOTION_PARMS = [pd.read_csv(PARMS['result_path']/f"motion_parms_state_{state+1}.csv") for state in range(PARMS['num_states'])]
 
     plot_proportion(TRACKLET_LISTS, PARMS)

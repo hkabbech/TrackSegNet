@@ -33,14 +33,14 @@ def generate_fbm_tracks(parms):
 
     # List of track length:
     if parms['track_length_fixed'] is True:
-        if parms['track_length'] < parms['min_frames']:
-            parms['track_length'] = parms['min_frames']
+        if parms['track_length'] < parms['length_threshold']:
+            parms['track_length'] = parms['length_threshold']
         track_len_list = np.full((parms['num_simulate_tracks']), parms['track_length'])
 
     else:
         # Length generated randomly from an exponential distribution
         track_len_list = np.random.exponential(parms['beta'], parms['num_simulate_tracks'])
-        track_len_list = track_len_list.astype(int) + parms['min_frames']
+        track_len_list = track_len_list.astype(int) + parms['length_threshold']
 
     track_df = None
     track_id = 0
@@ -62,11 +62,11 @@ def generate_fbm_tracks(parms):
                     new_steps = track_len - total
                 else:
                     new_steps = int(np.random.geometric(1-parms['ptm'][state_i][state_i]))
-                        #+ parms['min_frames']
+                        #+ parms['length_threshold']
                     # Condition to make sure the amount of steps does not exceed the track length:
                     if total + new_steps > track_len:
                         new_steps = track_len - total
-                        # if new_steps < parms['min_frames']:
+                        # if new_steps < parms['length_threshold']:
                             # state_i = track['state'][total-1]
 
                 # The same state is attributed for each step
