@@ -42,7 +42,14 @@ def fill_gaps_l1(track):
         bias = {'x': uniform(-displ['x']/4, displ['x']/4),
                 'y': uniform(-displ['y']/4, displ['y']/4)}
         if displ['x'] == 0 and displ['y'] == 0:
-            new_point = np.array((average_points['x'][0], average_points['y'][0], missing))
+            new_point = pd.DataFrame({
+                'index': 'X',
+                'x': average_points['x'],
+                'y': average_points['y'],
+                'frame': np.array([missing]),
+                'data folder': track.iloc[0]['data folder'],
+                'track_id': track.iloc[0]['track_id']
+            }) 
         else:
             if displ['x'] != 0:
                 slop = (average_points['y'] - prev_point['y'])\
@@ -89,12 +96,12 @@ def fill_gaps(parms, track_df):
             track_df_2 = new_track
         else:
             track_df_2 = pd.concat((track_df_2, new_track))
-    # Keep only tracks longer than parms['min_frames']:
-    print(f'\nKeep trajectories longer than {parms["min_frames"]}..')
+    # Keep only tracks longer than parms['length_threshold']:
+    print(f'\nKeep trajectories longer than {parms["length_threshold"]}..')
     track_df_3 = None
     for track_id in tqdm(track_df_2['track_id'].unique()):
         track = track_df_2[track_df_2['track_id'] == track_id]
-        if len(track) >= parms['min_frames']:
+        if len(track) >= parms['length_threshold']:
             if track_df_3 is None:
                 track_df_3 = track
             else:
