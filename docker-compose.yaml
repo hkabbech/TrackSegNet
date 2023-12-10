@@ -1,0 +1,9 @@
+version: '3.6'
+services:
+  tracksegnet-env:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: tracksegnet
+    volumes:
+      - ./results:/env/results
