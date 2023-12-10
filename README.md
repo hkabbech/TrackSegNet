@@ -3,7 +3,16 @@
 
 # TrackSegNet
 
-Trajectory segmentation into diffusive states using LSTM neural network.
+## Purposes
+
+
+`TrackSegNet` is a tool designed for the classification and segmentation of experimental trajectories, specifically those obtained from single-particle tracking microscopy data, into different diffusive states.
+
+To enable the training of the LSTM neural network, synthetic trajectories are initially generated, and the parameters of the generator can be fine-tuned.
+
+Upon completion of the training process, the experimental trajectories are classified at each point using the trained model. Subsequently, the trajectories are segmented and grouped based on their respective diffusive states. In this context, "diffusive states" refer to the distinct modes or patterns observed in the movement of particles.
+
+For each segmented track, the diffusion constant ($D$) and anomalous exponent ($\alpha$) are further estimated. This is accomplished by computing the mean squared displacement (MSD), providing valuable insights into the dynamic behavior of the particles within each identified diffusive state.
 
 
 ![pipeline](paper/pipeline.png)
@@ -16,14 +25,36 @@ git clone https://github.com/hkabbech/TrackSegNet.git
 cd TrackSegNet
 ```
 
-### Create the environment and install the packages
+### Either create and run a docker container
+
+Build a docker image (Rebuild the image after changing the parameters):
+```bash
+docker compose build
 ```
+Run the container:
+
+```bash
+docker compose run tracksegnet-env
+```
+
+### Or create the environment and install the packages
+
+```bash
 sudo apt install python3-virtualenv
 virtualenv -p /usr/bin/python3 tracksegnet-env
 source tracksegnet-env/bin/activate # for Windows: tracksegnet-env\bin\activate
 python -m pip install -r requirements.txt
 ```
-Note, to deactivate the virtual environment, type `deactivate`
+
+Run the program:
+
+```bash
+./tracksegnet.py parms.csv
+```
+
+Note, to deactivate the virtual environment, type `deactivate`.
+
+
 ## Prepare your data
 
 ### Data organization
@@ -32,7 +63,7 @@ Organize your data in a folder `SPT_experiment`, each sub-folder should contain 
 
 If `CSV` format is used, the headers should be: `x, y, frame, track_id`
 
-```
+```bash
 .
 ├── data/
 │   └── SPT_experiment/
@@ -72,13 +103,7 @@ Note that the program will run on the toy example if the parameters are unchange
 For updating the parameters of the track simulation and neural network training, please make the changes in the main file `tracksegnet.py`.
 
 
-## Run the program
-
-```
-./tracksegnet.py parms.csv
-```
-
 ## Reference
 
-Yavuz, S., Kabbech, H., van Staalduinen, J., Linder, S., van Cappellen, W.A., Nigg, A.L., Abraham, T.E., Slotman, J.A., Quevedo, M. Poot, R.A., Zwart, W., van Royen, M.E., Grosveld, F.G., Smal, I., Houtsmuller, A.B. (2023) Compartmentalization of androgen receptors at endogenous genes in living cells, Nucleic Acids Research, [https://doi.org/10.1093/nar/gkad803](https://doi.org/10.1093/nar/gkad803). 
+Yavuz, S., Kabbech, H., van Staalduinen, J., Linder, S., van Cappellen, W.A., Nigg, A.L., Abraham, T.E., Slotman, J.A., Quevedo, M. Poot, R.A., Zwart, W., van Royen, M.E., Grosveld, F.G., Smal, I., Houtsmuller, A.B. (2023). Compartmentalization of androgen receptors at endogenous genes in living cells, *Nucleic Acids Research* 51(20), [https://doi.org/10.1093/nar/gkad803](https://doi.org/10.1093/nar/gkad803). 
 
