@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 import matplotlib.cm as cm
 import seaborn as sns
+import warnings
 
 matplotlib.rcParams.update({
     'font.size': 12,
@@ -350,7 +351,9 @@ def compute_vac(tracklet_lists, parms, dtime=1, thr=1000):
         vac[:] = np.nan
         for i, _ in enumerate(vac):
             vac[i][:len(vac_tmp[i])] = vac_tmp[i][:1000]
-        all_vac[state][dtime] = np.nanmean(vac, axis=0)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            all_vac[state][dtime] = np.nanmean(vac, axis=0)
     return all_vac
 
 def plot_vac(tracklet_lists, parms, dtime=1):
