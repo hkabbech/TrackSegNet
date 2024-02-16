@@ -6,7 +6,7 @@ charset-normalizer==3.0.1
 contourpy==1.0.7
 cycler==0.11.0
 flatbuffers==23.1.21
-fonttools==4.38.0
+fonttools==4.43.0
 gast==0.4.0
 google-auth==2.16.0
 google-auth-oauthlib==0.4.6
