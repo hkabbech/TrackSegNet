@@ -21,7 +21,8 @@ jobs:
         pip install pylint
     - name: Analyzing the code with pylint
       run: |
-        pylint --max-line-length=120 --fail-under=8 --output-format=colorized $(git ls-files '*.py')
+        pylint --max-line-length=120 --fail-under=8 --ignored-modules=tensorflow.* --output-format=colorized $(git ls-files '*.py')
+        # ignored-modules=tensorflow.*: https://github.com/pylint-dev/pylint/issues/2603
     - name: Run code on toy example
       run: |
         python tracksegnet.py parms.csv
