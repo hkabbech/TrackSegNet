@@ -1,12 +1,6 @@
-name: run_toy-example
+name: run_pylint
 
-on:
-  pull_request_target:
-    types:
-      - opened
-      - reopened
-      - edited
-      - review_requested
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -25,6 +19,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pylint
-    - name: Run code on toy example
+    - name: Analyzing the code with pylint
       run: |
-        python tracksegnet.py parms.csv
+        pylint --max-line-length=120 --fail-under=8 --ignored-modules=tensorflow.* --output-format=colorized $(git ls-files '*.py')
+        # ignored-modules=tensorflow.*: https://github.com/pylint-dev/pylint/issues/2603
