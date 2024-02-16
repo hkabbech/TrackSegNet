@@ -48,5 +48,5 @@ runs:
             "platform": "${{ inputs.platform }}",
             "single-version": "${{ inputs.single-version }}",
           }
-          const script = require("./preview/scripts/edit-description.js");
+          const script = require("./readthedocs-preview/scripts/edit-description.js");
           await script({inputs, github, context});

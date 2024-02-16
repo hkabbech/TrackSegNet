@@ -10,4 +10,4 @@ COPY ./ ./
 # COPY src/ ./
 # COPY tracksegnet.py ./
 
-CMD ["python", "./tracksegnet.py", "parms.csv"]
+CMD ["python", "tracksegnet.py", "parms.csv"]
