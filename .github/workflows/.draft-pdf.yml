@@ -1,3 +1,5 @@
+name: generate_joss_paper
+
 on: [push]
 
 jobs:
