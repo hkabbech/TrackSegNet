@@ -1,5 +1,4 @@
 name: "Read the Docs Pull Request Preview"
-author: "@readthedocs"
 description: "Update PR description with a link to the rendered version of the documentation on Read the Docs"
 
 branding:
@@ -34,7 +33,7 @@ runs:
   steps:
     - uses: actions/checkout@v3
       with:
-        repository: "readthedocs/actions"
+        repository: "hkabbech/TrackSegNet"
         ref: "v1"
 
     - name: "Comment on Pull Request with Read the Docs' preview links"
