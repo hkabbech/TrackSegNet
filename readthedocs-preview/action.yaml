@@ -34,7 +34,7 @@ runs:
     - uses: actions/checkout@v3
       with:
         repository: "hkabbech/TrackSegNet"
-        ref: "v1"
+        ref: "dev"
 
     - name: "Comment on Pull Request with Read the Docs' preview links"
       uses: actions/github-script@v6

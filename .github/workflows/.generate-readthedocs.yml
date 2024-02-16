@@ -15,6 +15,6 @@ jobs:
   pull-request-links:
     runs-on: ubuntu-22.04
     steps:
-      - uses: hkabbech/TrackSegNet/readthedocs-preview@v1
+      - uses: hkabbech/TrackSegNet/readthedocs-preview@dev
         with:
           project-slug: "tracksegnet"
