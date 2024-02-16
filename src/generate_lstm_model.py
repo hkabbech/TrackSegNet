@@ -52,7 +52,7 @@ def generate_lstm_model(sim_df, parms):
                         epochs=parms['epochs'], batch_size=parms['batch_size'],
                         validation_split=parms['percent']['val'], shuffle=True)
     plot_training_curves(parms['model_path'], history, parms['patience'])
-    with open(parms['model_path']/'model_summary.txt', 'w') as file:
+    with open(parms['model_path']/'model_summary.txt', 'w', encoding='utf-8') as file:
         with redirect_stdout(file):
             model.summary()
 
@@ -62,7 +62,7 @@ def generate_lstm_model(sim_df, parms):
     train_evaluation = best_model.evaluate(train_set['features'], train_set['states'], verbose=0)
     test_evaluation = best_model.evaluate(test_set['features'], test_set['states'], verbose=0)
 
-    with open(parms['model_path']/'evaluation_model.txt', 'w') as file:
+    with open(parms['model_path']/'evaluation_model.txt', 'w', encoding='utf-8') as file:
         print(f'Train loss:\t{train_evaluation[0]:.2f}\tTrain accuracy:\t{train_evaluation[1]:.2f}',
               file=file)
         print(f'Test loss:\t{test_evaluation[0]:.2f}\tTest accuracy:\t{test_evaluation[1]:.2f}',

@@ -4,6 +4,7 @@ This modules contains functions for trajectory analysis.
 """
 
 # Third-party modules
+import warnings
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -11,9 +12,8 @@ from scipy.optimize import curve_fit
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-import matplotlib.cm as cm
+from matplotlib import cm
 import seaborn as sns
-import warnings
 
 matplotlib.rcParams.update({
     'font.size': 12,
@@ -132,7 +132,7 @@ def compute_all_msd(tracklet_lists, parms):
 
 def plot_scatter_alpha_diffusion(motion_parms, parms):
     """Make a scatter plot of both the alpha and diffusion distributions."""
-    print(f'\nPlot D/alpha scatterplot...')
+    print('\nPlot D/alpha scatterplot...')
     print('centroids...')
     func = None
     for state in range(parms['num_states']):
@@ -225,9 +225,9 @@ def plot_displ(tracklet_lists, parms, dtime=1):
 
     plt.close()
     hist = {}
-    for state, _ in enumerate(all_displ_tracklet):
-        displ_tmp = np.concatenate((all_displ_tracklet[state][dtime]['x'],
-                                    all_displ_tracklet[state][dtime]['y']))
+    for state, all_displ_tracklet_state in enumerate(all_displ_tracklet):
+        displ_tmp = np.concatenate((all_displ_tracklet_state[dtime]['x'],
+                                    all_displ_tracklet_state[dtime]['y']))
         binwidth = 0.02
         bins = np.arange(-0.4-0.01, 0.4 + binwidth, binwidth)
         sns.histplot(displ_tmp, bins=bins, stat='density')
@@ -296,8 +296,8 @@ def plot_angles(tracklet_lists, parms, dtime=1):
 
     plt.close()
     hist = {}
-    for state, _ in enumerate(tracklet_angles):
-        sns.histplot(np.array(tracklet_angles[state]), stat='density', bins=25,
+    for state, tracklet_angles_state in enumerate(tracklet_angles):
+        sns.histplot(np.array(tracklet_angles_state), stat='density', bins=25,
                      color=parms['colors'][state], alpha=0.5)
         bars = plt.gca().patches[0]
         xy_coords = np.array([[bars.get_x()+(bars.get_width()/2), bars.get_height()]\
