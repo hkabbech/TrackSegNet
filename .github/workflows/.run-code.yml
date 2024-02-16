@@ -1,4 +1,4 @@
-name: run_pylint
+name: run_pylint_toy-example
 
 on: [push, workflow_dispatch]
 
@@ -19,6 +19,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pylint
-    - name: Analysing the code with pylint
+    - name: Analyzing the code with pylint
       run: |
         pylint --max-line-length=120 --fail-under=8 --output-format=colorized $(git ls-files '*.py')
+    - name: Run code on toy example
+      run: |
+        python tracksegnet.py parms.csv
