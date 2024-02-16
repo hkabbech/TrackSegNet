@@ -1,2 +1,8 @@
+# Python cache files:
 __pycache__
+
+# pycharm:
+.idea/
+
+# Generated files:
 results/
