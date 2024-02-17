@@ -54,4 +54,6 @@ werkzeug>=2.3.8
 wrapt==1.14.1
 zipp==3.11.0
 myst_parser>=2.0.0
-sphinx-rtd-theme
+sphinx>=7.0.0
+sphinx_rtd_theme>=2.0.0
+readthedocs-sphinx-search>=0.1.1
