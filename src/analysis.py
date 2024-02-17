@@ -302,8 +302,8 @@ def plot_angles(tracklet_lists, parms, dtime=1):
 
     plt.close()
     hist = {}
-    for state, tracklet_angles_state in enumerate(tracklet_angles):
-        sns.histplot(np.array(tracklet_angles_state), stat='density', bins=25,
+    for state, _ in enumerate(tracklet_angles):
+        sns.histplot(np.array(tracklet_angles[state]), stat='density', bins=25,
                      color=parms['colors'][state], alpha=0.5)
         bars = plt.gca().patches[0]
         xy_coords = np.array([[bars.get_x()+(bars.get_width()/2), bars.get_height()]\
