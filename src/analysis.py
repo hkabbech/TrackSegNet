@@ -23,7 +23,13 @@ matplotlib.rcParams.update({
 })
 
 def convert_sigma(diffusion, parms):
-    """Convert diffusion to sigma value."""
+    """Convert diffusion to sigma value.
+
+    :param diffusion: Diffusion D in um**2/s
+    :type diffusion: float
+    :return: sigma value
+    :rtype: float
+    """
     sigma = np.sqrt((diffusion/parms['unit_diff'])*2)
     return sigma
 
