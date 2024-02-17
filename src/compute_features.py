@@ -31,8 +31,7 @@ def compute_mean_distances(track, delta, num=1):
     mean_dist = []
     for i in range(num_frames):
         start = i - num
-        if start < 0:
-            start = 0
+        start = max(start, 0)
         end = i + num
         if end > num_frames - num - delta:
             end = num_frames - num - delta

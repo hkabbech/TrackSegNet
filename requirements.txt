@@ -6,7 +6,7 @@ charset-normalizer==3.0.1
 contourpy==1.0.7
 cycler==0.11.0
 flatbuffers==23.1.21
-fonttools==4.38.0
+fonttools==4.43.0
 gast==0.4.0
 google-auth==2.16.0
 google-auth-oauthlib==0.4.6
@@ -53,3 +53,7 @@ urllib3>=1.26.18
 werkzeug>=2.3.8
 wrapt==1.14.1
 zipp==3.11.0
+myst_parser>=2.0.0
+sphinx>=7.0.0
+sphinx_rtd_theme>=2.0.0
+readthedocs-sphinx-search>=0.1.1

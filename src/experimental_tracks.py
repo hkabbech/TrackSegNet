@@ -49,7 +49,7 @@ def fill_gaps_l1(track):
                 'frame': np.array([missing]),
                 'data folder': track.iloc[0]['data folder'],
                 'track_id': track.iloc[0]['track_id']
-            }) 
+            })
         else:
             if displ['x'] != 0:
                 slop = (average_points['y'] - prev_point['y'])\
@@ -126,7 +126,7 @@ def extract_1_mdf(folder_name, parms):
     track_df = None
     # coordinates of the current track:
     current_coord = {'frame': np.array([]), 'x': np.array([]), 'y': np.array([])}
-    with open(folder_name/filename, 'r') as file:
+    with open(folder_name/filename, 'r', encoding='utf-8') as file:
         for line in file.readlines():
             # Find a new Track
             if line[:5] == 'Track':
@@ -188,7 +188,7 @@ def extract_all_tracks(parms):
     """Extracts the trajectories from several MDF files and return a unique pandas
     DataFrame containing the tracks from all the files."""
     num_files = len(parms['folder_names'])
-    print("\nExtraction of tracjectories from {} mdf files...".format(num_files))
+    print(f"\nExtraction of tracjectories from {num_files} mdf files...")
     all_track_df = []
     if parms['track_format'] == 'MDF':
         for folder_name in tqdm(parms['folder_names']):

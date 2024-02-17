@@ -1,8 +1,10 @@
+name: "Generate JOSS paper"
+
 on: [push]
 
 jobs:
   paper:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Paper Draft
     steps:
       - name: Checkout

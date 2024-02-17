@@ -4,6 +4,7 @@ This modules contains functions for trajectory analysis.
 """
 
 # Third-party modules
+import warnings
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -11,9 +12,8 @@ from scipy.optimize import curve_fit
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-import matplotlib.cm as cm
+from matplotlib import cm
 import seaborn as sns
-import warnings
 
 matplotlib.rcParams.update({
     'font.size': 12,
@@ -23,7 +23,13 @@ matplotlib.rcParams.update({
 })
 
 def convert_sigma(diffusion, parms):
-    """Convert diffusion to sigma value."""
+    """Convert diffusion to sigma value.
+
+    :param diffusion: Diffusion D in um**2/s
+    :type diffusion: float
+    :return: sigma value
+    :rtype: float
+    """
     sigma = np.sqrt((diffusion/parms['unit_diff'])*2)
     return sigma
 
@@ -132,7 +138,7 @@ def compute_all_msd(tracklet_lists, parms):
 
 def plot_scatter_alpha_diffusion(motion_parms, parms):
     """Make a scatter plot of both the alpha and diffusion distributions."""
-    print(f'\nPlot D/alpha scatterplot...')
+    print('\nPlot D/alpha scatterplot...')
     print('centroids...')
     func = None
     for state in range(parms['num_states']):
@@ -225,9 +231,9 @@ def plot_displ(tracklet_lists, parms, dtime=1):
 
     plt.close()
     hist = {}
-    for state, _ in enumerate(all_displ_tracklet):
-        displ_tmp = np.concatenate((all_displ_tracklet[state][dtime]['x'],
-                                    all_displ_tracklet[state][dtime]['y']))
+    for state, all_displ_tracklet_state in enumerate(all_displ_tracklet):
+        displ_tmp = np.concatenate((all_displ_tracklet_state[dtime]['x'],
+                                    all_displ_tracklet_state[dtime]['y']))
         binwidth = 0.02
         bins = np.arange(-0.4-0.01, 0.4 + binwidth, binwidth)
         sns.histplot(displ_tmp, bins=bins, stat='density')
