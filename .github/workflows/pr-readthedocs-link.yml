@@ -1,4 +1,4 @@
-name: generate_readthedocs
+name: "ReadtheDocs Pull Request Preview"
 
 on:
   pull_request_target:

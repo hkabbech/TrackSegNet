@@ -6,3 +6,6 @@ __pycache__
 
 # Generated files:
 results/
+
+# readthedocs:
+docs/build/

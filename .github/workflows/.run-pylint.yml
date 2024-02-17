@@ -1,4 +1,4 @@
-name: run_pylint
+name: "Check code with pylint"
 
 on: [push, workflow_dispatch]
 
