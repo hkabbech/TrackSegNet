@@ -1,4 +1,4 @@
-name: run_toy-example
+name: "Run tracksegnet on the toy example"
 
 on:
   pull_request_target:

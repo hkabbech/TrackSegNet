@@ -1,4 +1,4 @@
-name: generate_joss_paper
+name: "Generate JOSS paper"
 
 on: [push]
 
