@@ -8,9 +8,12 @@ TrackSegNet's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Readme:
+   :caption: TrackSegNet:
 
-   readme
+   purposes
+   installation
+   data-preparation
+   run-instruction
 
 .. toctree::
    :maxdepth: 1
