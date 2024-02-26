@@ -16,11 +16,11 @@ TrackSegNet's documentation!
    :maxdepth: 1
    :caption: Modules:
 
-   analysis
-   compute_features
-   experimental_tracks
-   generate_lstm_model
    simulate_tracks
+   experimental_tracks
+   compute_features
+   generate_lstm_model
+   analysis
    utils
 
 .. toctree::

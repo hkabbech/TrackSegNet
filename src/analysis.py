@@ -1,6 +1,6 @@
-"""analysis functions
+"""Analysis and plotting functions
 
-This modules contains functions for trajectory analysis.
+This modules contains functions for trajectory analysis and plotting.
 """
 
 # Third-party modules
@@ -23,23 +23,41 @@ matplotlib.rcParams.update({
 })
 
 def convert_sigma(diffusion, parms):
-    """Convert diffusion to sigma value.
+    """Converts diffusion to sigma value.
 
-    :param diffusion: Diffusion D in um**2/s
+    :param diffusion: Diffusion value [um**2/s] to convert.
     :type diffusion: float
-    :return: sigma value
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :return: sigma value.
     :rtype: float
     """
     sigma = np.sqrt((diffusion/parms['unit_diff'])*2)
     return sigma
 
 def convert_diffusion(sigma, parms):
-    """Convert sigma to diffusion value."""
+    """Converts sigma to diffusion value.
+
+    :param sigma: Sigma value to convert.
+    :type sigma: float
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :return: Diffusion value [um**2/s].
+    :rtype: float
+    """
     diffusion = ((sigma**2)/2)*parms['unit_diff']
     return diffusion
 
 def compute_ptm(track_df, parms):
-    """Compute the probability transition matrix."""
+    """Computes the probability transition matrix (PTM).
+
+    :param track_df: Dataframe containing all extracted trajectories.
+    :type track_df: pd.DataFrame
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :return: probabilities to transition between states
+    :rtype: pd.DataFrame
+    """
     print('\nCompute probability transition matrix (PTM)...')
     counts = np.zeros((parms['num_states'], parms['num_states']), dtype=int)
     for track_id in tqdm(track_df['track_id'].unique()):
@@ -61,8 +79,16 @@ def compute_ptm(track_df, parms):
     return ptm
 
 def make_tracklet_lists(track_df, parms):
-    """Segment the trajectories into tracklet (based on the state group) and regroup them within the
-    same list."""
+    """Segments the trajectories into tracklet (based on the state group) and regroup them within the
+    same list.
+
+    :param track_df: Dataframe containing all extracted trajectories.
+    :type track_df: pd.DataFrame
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :return: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :rtype: list
+    """
     print('\nSegment and group tracklets per diffusive states...')
     tracklet_lists = [[] for _ in range(parms['num_states'])]
     for track_id in tqdm(track_df['track_id'].unique()):
@@ -88,8 +114,17 @@ def make_tracklet_lists(track_df, parms):
     return tracklet_lists
 
 def compute_msd(track, size, dim=2):
-    """Compute the mean square displacement (MSD) for a given track in order to estimate D and alpha
+    """Computes the mean square displacement (MSD) for a given track in order to estimate D and alpha
     using the formula:  log(MSD(dt)) ~ alpha.log(dt) + log(C), with C = 2nD.
+    
+    :param track: Dataframe containing a trajectory's coordinates.
+    :type track: pd.DataFrame
+    :param size: Number of delta time points to use for the MSD curve fit.
+    :type size: int
+    :param dim: Dimentionality of the track [Defaults: 2].
+    :type dim: int
+    :return: (msd values, time axis, measured alpha (slope), measured log_C (intercept), resulting diffusion)
+    :rtype: (np.array, np.array, float, float, float)
     """
     def f_slope_intercept(x_val, a_val, b_val):
         """Linear regression y = ax + b."""
@@ -118,7 +153,15 @@ def compute_msd(track, size, dim=2):
     return (msd, delta_array, alpha, log_c, diffusion)
 
 def compute_all_msd(tracklet_lists, parms):
-    """Compute the MSD for each given track."""
+    """Computes the MSD for each given track.
+
+    :param tracklet_lists: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :type tracklet_lists: list
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :return: Dictionary containing lists of measured motion parameters for each track with keys: alpha, diffusion and track_id.
+    :rtype: dict
+    """
     print('\nCompute MSD...')
     motion_parms = [{'alpha': [], 'diffusion': [], 'track_id': []}\
                     for _ in range(parms['num_states'])]
@@ -137,7 +180,13 @@ def compute_all_msd(tracklet_lists, parms):
     return motion_parms
 
 def plot_scatter_alpha_diffusion(motion_parms, parms):
-    """Make a scatter plot of both the alpha and diffusion distributions."""
+    """Makes a scatterplot of the alpha and diffusion distributions.
+
+    :param motion_parms: Dictionary containing lists of measured motion parameters for each track with keys: alpha, diffusion and track_id.
+    :type motion_parms: dict
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    """
     print('\nPlot D/alpha scatterplot...')
     print('centroids...')
     func = None
@@ -183,7 +232,13 @@ def plot_scatter_alpha_diffusion(motion_parms, parms):
     plt.close()
 
 def plot_proportion(tracklet_lists, parms):
-    """Plot pie chart proportion of tracklets in each diffusive state."""
+    """Plots the proportion of tracklets in each diffusive state as a pie chart.
+
+    :param tracklet_lists: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :type tracklet_lists: list
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    """
     print('\nPlot proportion...')
     tracklet_num = [len(tracklet_list) for tracklet_list in tracklet_lists]
     print(tracklet_num)
@@ -200,7 +255,17 @@ def plot_proportion(tracklet_lists, parms):
     plt.close()
 
 def compute_displ(tracklet_lists, parms, dtime=1):
-    """Compute displacements for each tracklet state."""
+    """Computes the displacements for each tracklet state.
+
+    :param tracklet_lists: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :type tracklet_lists: list
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param dtime: Time interval between two data points [Default: 1]
+    :type dtime: int
+    :return: List of calculated displacements for each tracklet group.
+    :rtype: list
+    """
     all_displ_tracklet = [{dtime: None} for _ in range(len(tracklet_lists))]
     for state in tqdm(range(parms['num_states'])):
         for tracklet in tracklet_lists[state]:
@@ -225,7 +290,15 @@ def compute_displ(tracklet_lists, parms, dtime=1):
     return all_displ_tracklet
 
 def plot_displ(tracklet_lists, parms, dtime=1):
-    """Plot distribution of displacements per tracklet state."""
+    """Plots the distribution of displacements per tracklet state.
+
+    :param tracklet_lists: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :type tracklet_lists: list
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param dtime: Time interval between two data points [Default: 1]
+    :type dtime: int
+    """
     print(f'\nPlot displacements with dt={dtime}...')
     all_displ_tracklet = compute_displ(tracklet_lists, parms, dtime=dtime)
 
@@ -260,7 +333,17 @@ def plot_displ(tracklet_lists, parms, dtime=1):
     plt.close()
 
 def compute_angles(tracklet_lists, parms, dtime=1):
-    """Calculate list of angles for each tracklet state."""
+    """Computes the angles for each tracklet state.
+
+    :param tracklet_lists: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :type tracklet_lists: list
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param dtime: Time interval between two data points [Default: 1]
+    :type dtime: int
+    :return: Dictionary of numpy arrays for each tracklet group containing the calculated angles.
+    :rtype: dict
+    """
     tracklet_angles = {}
     for state in tqdm(range(parms['num_states'])):
         angles_current_state = np.array([])
@@ -280,8 +363,13 @@ def compute_angles(tracklet_lists, parms, dtime=1):
     return tracklet_angles
 
 def calculate_fold_180_0(angle_list):
-    """Calculate fold anisotropy for a given list of angles. ref: Hansen et al.
-    Nature chemical biology, 16.3 (2020), https://doi.org/10.1038/s41589-019-0422-3"""
+    """Calculates the fold anisotropy for a given list of angles. ref doi:10.1038/s41589-019-0422-3
+
+    :param angle_list: Numpy array containing the calculated angles for a given tracklet group.
+    :type angle_list: dict
+    :return: (measure fold anisopropy, total number of 180 +/-30° angles, total number of 0 +/-30° angles)
+    :rtype:  (float, int, int)
+    """
     num = {'180': 0, '0': 0}
     for angle in angle_list:
         # angle = angle + 2*np.pi
@@ -296,14 +384,22 @@ def calculate_fold_180_0(angle_list):
     return (fold_180_0, (num['180'], num['0']))
 
 def plot_angles(tracklet_lists, parms, dtime=1):
-    """Plot angular distribution per tracklet state."""
+    """Plots the angular distribution per tracklet state.
+
+    :param tracklet_lists: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :type tracklet_lists: list
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param dtime: Time interval between two data points [Default: 1]
+    :type dtime: int
+    """
     print(f'\nPlot angles with dt={dtime}...')
     tracklet_angles = compute_angles(tracklet_lists, parms, dtime=dtime)
 
     plt.close()
     hist = {}
     for state, _ in enumerate(tracklet_angles):
-        sns.histplot(np.array(tracklet_angles[state]), stat='density', bins=25,
+        sns.histplot(tracklet_angles[state], bins=25, stat='density',
                      color=parms['colors'][state], alpha=0.5)
         bars = plt.gca().patches[0]
         xy_coords = np.array([[bars.get_x()+(bars.get_width()/2), bars.get_height()]\
@@ -339,7 +435,19 @@ def plot_angles(tracklet_lists, parms, dtime=1):
     plt.close()
 
 def compute_vac(tracklet_lists, parms, dtime=1, thr=1000):
-    """Compute velocity autocorrelation (VAC) curves for each tracklet state."""
+    """Computes the velocity autocorrelation (VAC) curves for each tracklet state.
+
+    :param tracklet_lists: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :type tracklet_lists: list
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param dtime: Time interval between two data points [Default: 1]
+    :type dtime: int
+    :param thr: Threshold for the vac limiting the number of points calculated [Default: 1000].
+    :type thr: int
+    :return:  List of calculated VAC for each tracklet group.
+    :rtype: list
+    """
     time_frame_ms = parms['time_frame']*1000
     all_vac = [{dtime: None} for _ in range(len(tracklet_lists))]
     for state in tqdm(range(parms['num_states'])):
@@ -363,7 +471,15 @@ def compute_vac(tracklet_lists, parms, dtime=1, thr=1000):
     return all_vac
 
 def plot_vac(tracklet_lists, parms, dtime=1):
-    """Plot velocity autocorrelation curves per tracklet state."""
+    """Plots the velocity autocorrelation curves per tracklet state.
+
+    :param tracklet_lists: List of tracklet groups. Each group consists of a dataframe of tracklets.
+    :type tracklet_lists: list
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param dtime: Time interval between two data points [Default: 1]
+    :type dtime: int
+    """
     print(f'\nPlot velocity autocorrelation with dt={dtime}...')
     all_vac = compute_vac(tracklet_lists, parms, dtime=dtime)
 

@@ -1,13 +1,19 @@
 """Other functions
 
-This module implements a few functions to manage main parameters.
+This module implements a extra utils functions.
 """
 
 # Third-party modules
 import os
 
 def check_parms(parms_df):
-    """Check each parameter value and raise an error if uncorrect"""
+    """Check each parameter value and raise an error if uncorrect.
+
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :return: Refined parameters with type.
+    :rtype: dict
+    """
     if not os.path.isdir(parms_df['data_path']):
         raise ValueError('data_path does not exist.')
 
@@ -61,7 +67,13 @@ def check_parms(parms_df):
     return parms_df
 
 def get_color_list(num_states):
-    """Create list of colors"""
+    """Create list of colors.
+    
+    :param num_states: Number of states.
+    :type num_states: int
+    :return: List of colors for the plots.
+    :rtype: list
+    """
     if num_states == 1:
         print('Please, select 2 to 6 states.')
     if num_states == 2:

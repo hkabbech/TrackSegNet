@@ -16,7 +16,14 @@ from tensorflow.keras.layers import LSTM, Dense, TimeDistributed, Bidirectional
 
 
 def generate_lstm_model(sim_df, parms):
-    """Prepares the dataset, defines the neural network, trains and evaluates the model."""
+    """Prepares the dataset, defines the neural network, trains and evaluates the model.
+    Best model is automatically saved.
+
+    :param sim_df: Dataframe containing the simulated tracks for the training.
+    :type sim_df: pd.DataFrame
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    """
     print('\nTrain LSTM model...')
     start_time = datetime.now()
 
@@ -82,7 +89,15 @@ def generate_lstm_model(sim_df, parms):
 
 
 def plot_training_curves(path, history, patience):
-    """Plots loss and accuracy training curves."""
+    """Plots loss and accuracy training curves.
+
+    :param path: Output path.
+    :type path: str
+    :param history: History of the training to be plotted.
+    :type history: History keras object
+    :param patience: Value of the EarlyStopping criterion used here to trim the axis.
+    :type patience: int
+    """
     path = path/'training_plots'
     os.makedirs(path, exist_ok=True)
 
@@ -109,7 +124,15 @@ def plot_training_curves(path, history, patience):
     plt.close()
 
 def plot_accuracy_over_window(path, booleans, window_size):
-    """Plots a bar graph of the accuracy gradient over the tracks."""
+    """Plots a bar graph of the accuracy gradient over the tracks.
+
+    :param path: Output path.
+    :type path: str
+    :param booleans: Array of true and false based on 'predicted_states_test == true_states_test'.
+    :type booleans: np.array
+    :param window_size: Used window size.
+    :type window_size: int
+    """
     path = path/'training_plots'
     os.makedirs(path, exist_ok=True)
     # ws in parms['window_size'] and hu in parms['hidden_units']

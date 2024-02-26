@@ -1,5 +1,5 @@
-compute\_features module
-========================
+compute\_features
+=================
 
 .. automodule:: compute_features
    :members:

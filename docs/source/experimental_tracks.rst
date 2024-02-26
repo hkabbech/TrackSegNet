@@ -1,5 +1,5 @@
-experimental\_tracks module
-===========================
+experimental\_tracks
+====================
 
 .. automodule:: experimental_tracks
    :members:
