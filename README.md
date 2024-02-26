@@ -28,32 +28,28 @@ cd TrackSegNet
 
 ### Either create and run a docker container
 
-Build a docker image (Rebuild the image after changing the parameters):
 ```bash
+# Build a docker image (Rebuild the image after changing the parameters):
 docker compose build
-```
-Run the container:
-
-```bash
+# Run the container:
 docker compose run tracksegnet-env
 ```
 
-### Or create the environment and install the packages
+### Or create a virtual environment and install the packages
+
+Requirement: python3.8 or equivalent and the virtualenv library
 
 ```bash
-sudo apt install python3-virtualenv
-virtualenv -p /usr/bin/python3 tracksegnet-env
-source tracksegnet-env/bin/activate # for Windows: tracksegnet-env\bin\activate
+# Create the environment:
+python -m venv tracksegnet-env
+# virtualenv -p /usr/bin/python3 tracksegnet-env
+# Activate the environment:
+source ./tracksegnet-env/bin/activate # for Windows PowerShell: .\tracksegnet-env\Scripts\Activate.ps1 (run as administrator)
+# Install the required python libraries:
 python -m pip install -r requirements.txt
 ```
 
-Run the program:
-
-```bash
-./tracksegnet.py parms.csv
-```
-
-Note, to deactivate the virtual environment, type `deactivate`.
+Note for later, to deactivate the virtual environment, type `deactivate`.
 
 
 ## Prepare your data
@@ -107,7 +103,12 @@ Note that the program will run on the toy example if the parameters are unchange
 For updating the parameters of the track simulation and neural network training, please make the changes in the main file `tracksegnet.py`.
 
 
+## Run the program
 
+
+```bash
+python tracksegnet.py parms.csv
+```
 
 ## Reference
 

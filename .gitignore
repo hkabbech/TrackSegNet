@@ -4,6 +4,9 @@ __pycache__
 # pycharm:
 .idea/
 
+# python env:
+tracksegnet-env/
+
 # Generated files:
 results/
 
