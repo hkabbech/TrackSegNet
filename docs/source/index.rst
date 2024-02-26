@@ -3,8 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-TrackSegNet's documentation!
-============================
+Welcome to TrackSegNet's documentation!
+=======================================
+
+Segmentation of trajectories into diffusive states using supervised LSTM network.
 
 .. toctree::
    :maxdepth: 1
@@ -14,6 +16,7 @@ TrackSegNet's documentation!
    installation
    data-preparation
    run-instruction
+   analysis-plots
 
 .. toctree::
    :maxdepth: 1
