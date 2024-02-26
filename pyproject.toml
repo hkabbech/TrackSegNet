@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "TrackSegNet"
+version = "1.2.0"
+dynamic = ["dependencies"]
+authors = [
+  { name="Hélène Kabbech", email="helene.kabbech@gmail.com" },
+]
+description = "Segmentation of trajectories into diffusive states using supervised LSTM network"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/hkabbech/TrackSegNet"
+Issues = "https://github.com/hkabbech/TrackSegNet/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/analysis.py", "src/compute_features.py", "src/experimental_tracks.py", "src/generate_lstm_model.py", "src/simulate_tracks.py", "src/utils.py"]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]

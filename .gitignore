@@ -12,3 +12,7 @@ results/
 
 # readthedocs:
 docs/build/
+
+# create python package:
+TrackSegNet.egg-info
+dist/
