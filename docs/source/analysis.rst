@@ -1,5 +1,5 @@
-analysis module
-===============
+analysis
+========
 
 .. automodule:: analysis
    :members:

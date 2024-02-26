@@ -1,8 +1,8 @@
 """Simulate fBm trajectories.
 
-This module contains a few functions used to simulate fractional Brownian motion (fBm) trajectories.
-The fBm kernel (Lundahl et al. 1986) is used to generate each dimension using a given alpha and
-diffusion values (the motion parameters). The tracks are made of a mixture of N states.
+This module contains functions used to simulate fractional Brownian motion (fBm) trajectories.
+Each dimension is generated with the fBm kernel (Lundahl et al. 1986) using a diffusion and alpha value.
+The tracks are made of a mixture of N states following the probabilities to transition.
 """
 
 # Third-party modules
@@ -16,7 +16,17 @@ from src.analysis import compute_ptm
 
 
 def get_fbm(total_frame, alpha, diff):
-    """Generates a 1D fBm using the formula from Lundahl et al. 1986."""
+    """Generates a 1D fBm using the formula from Lundahl et al. 1986.
+
+    :param total_frame: The total number of frames to generate
+    :type total_frame: int
+    :param alpha: The alpha value for the simulation.
+    :type alpha: float
+    :param diff: The diffusion value for the simulation.
+    :type diff: float
+    :return: The 1-dimensional fBm generated track.
+    :rtype: np.array
+    """
     time_interval = np.arange(0, total_frame, 1)
     x_array, y_array = np.meshgrid(time_interval, time_interval)
     kval = np.abs(x_array - y_array)
@@ -27,7 +37,13 @@ def get_fbm(total_frame, alpha, diff):
     return fbm
 
 def generate_fbm_tracks(parms):
-    """Creates fBm trajectories and stores tham in a pandas DataFrame."""
+    """Creates multiple fBm trajectories with a mixture of states which will be used for training the neural network.
+
+    :param params: Stored parameters containing instructions to generate fBm trajectories.
+    :type parms: dict
+    :return: The dataframe storing all generated fBm trajectories with keys: `track_id`, `frame`, `x`, `y` and `state`
+    :rtype: pd.DataFrame
+    """
     # List of initial states (between 0 and parms['num_states']) generated randomly
     init_state_list = np.random.randint(parms['num_states'], size=parms['num_simulate_tracks'])
 
@@ -94,7 +110,13 @@ def generate_fbm_tracks(parms):
     return track_df
 
 def run_track_simulation(parms):
-    """Simulation of fBm trajectories."""
+    """Run the simulation by first generating fBm trajectories and then computing all features.
+
+    :param params: Stored parameters containing instructions to generate fBm trajectories.
+    :type parms: dict
+    :return: The dataframe storing all generated fBm trajectories and computed features. Dataframe also saved as a csv file.
+    :rtype: pd.DataFrame
+    """
     print(f"\nSimulation of {parms['num_simulate_tracks']:,d} trajectories...")
     sim_df = generate_fbm_tracks(parms)
     print(compute_ptm(sim_df, parms))

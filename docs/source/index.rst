@@ -8,19 +8,22 @@ TrackSegNet's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Readme:
+   :caption: TrackSegNet:
 
-   readme
+   purposes
+   installation
+   data-preparation
+   run-instruction
 
 .. toctree::
    :maxdepth: 1
    :caption: Modules:
 
-   analysis
-   compute_features
-   experimental_tracks
-   generate_lstm_model
    simulate_tracks
+   experimental_tracks
+   compute_features
+   generate_lstm_model
+   analysis
    utils
 
 .. toctree::

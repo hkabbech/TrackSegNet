@@ -1,7 +1,7 @@
-"""Extract experimental trajectories
+"""Extract experimental trajectories.
 
-This module contains functions used for the extraction of real experimental trajectories (stored in
-MDF file format).
+This module contains functions used for the extraction of real experimental trajectories (stored as
+MDF or CSV file format).
 """
 
 # Third-party modules
@@ -20,8 +20,13 @@ from src.compute_features import compute_all_features
 
 
 def fill_gaps_l1(track):
-    """Fills the 1-length gaps with a random point based on coordinates of the previous and next
-    points."""
+    """Fills the 1-length gaps with an intermediate point having an additional bias (to add randomness).
+
+    :param track: Given track which its 1-length gaps will be filled with an appropriate generated point.
+    :type track: pd.DataFrame
+    :return: (The updated track with 1-length gaps filled, the number of gaps filled for this given track)
+    :rtype: (pd.DataFrame, int)
+    """
     # get gaps:
     start = int(track['frame'].iloc[0])
     end = int(track['frame'].iloc[-1])
@@ -71,7 +76,15 @@ def fill_gaps_l1(track):
     return track, num_gaps_l1
 
 def fill_gaps(parms, track_df):
-    """Splits the tracks into two separate trajectories for gaps larger than 1 frame."""
+    """Fill the gap in trajectory frames by taking an intermediate point and splits the trajectory into two separate tracks for gaps larger than 1 frame.
+
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param track_df: Dataframe containing all extracted trajectories with keys: `x`, `y`, `frame`, `data_folder`, `track_id`.
+    :type track_df: pd.DataFrame
+    :return: The updated dataframe with filled gaps or splitted tracks.
+    :rtype: pd.DataFrame
+    """
     num_tracks = len(track_df['track_id'].unique())
     print(f'\nCheck and fill gaps in {num_tracks:,d} trajectories...')
     track_df_2 = None
@@ -112,11 +125,20 @@ def fill_gaps(parms, track_df):
     print(f"and {total_gaps_ln:,d} tracks created due to length-2+ gaps.")
     return track_df_3.reset_index(drop=True)
 
-def extract_1_mdf(folder_name, parms):
-    """Extracts experimental trajectories from one MDF file and return a pandas DataFrame containing
-    the trajectories."""
-    # Find mdf file to analyze
-    filename = 'tracks.simple.mdf'
+def extract_1_mdf(folder_name, parms, filename='tracks.simple.mdf'):
+    """Extracts experimental trajectories from a single MDF file and returns a pandas DataFrame which stores
+    the trajectories.
+
+    :param folder_name: Name of the folder containing the trajectory file.
+    :type folder_name: str
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param filename: File which stores trajectory coordinates extracted from the tracking.
+                     `[Defaults: 'tracks.simple.mdf']`
+    :type filename: str
+    :return: All extracted trajectories as a dataframe with keys: `x`, `y`, `frame`, `data_folder`, `track_id`.
+    :rtype: pd.DataFrame
+    """    
     if not os.path.isfile(folder_name/filename):
         for filename in os.listdir(folder_name):
             if filename.endswith(".mdf"):
@@ -161,11 +183,20 @@ def extract_1_mdf(folder_name, parms):
                         track_df = pd.concat((track_df, track))
     return track_df
 
-def extract_1_csv(folder_name, parms):
-    """Extracts experimental trajectories from one MDF file and return a pandas DataFrame containing
-    the trajectories."""
-    # Find mdf file to analyze
-    filename = 'tracks.csv'
+def extract_1_csv(folder_name, parms, filename='tracks.csv'):
+    """Extracts experimental trajectories from a single CSV file and returns a pandas DataFrame which stores
+    the trajectories.
+
+    :param folder_name: Name of the folder containing the trajectory file.
+    :type folder_name: str
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :param filename: File which stores trajectory coordinates extracted from the tracking.
+                     `[Defaults: 'tracks.csv']`
+    :type filename: str
+    :return: All extracted trajectories as a dataframe with keys: `x`, `y`, `frame`, `data_folder`, `track_id`.
+    :rtype: pd.DataFrame
+    """ 
     if not os.path.isfile(folder_name/filename):
         for filename in os.listdir(folder_name):
             if filename.endswith(".csv"):
@@ -185,8 +216,14 @@ def extract_1_csv(folder_name, parms):
     return track_df
 
 def extract_all_tracks(parms):
-    """Extracts the trajectories from several MDF files and return a unique pandas
-    DataFrame containing the tracks from all the files."""
+    """Extracts the trajectories from several MDF (or CSV) files, fills the gaps and return a unique pandas
+    DataFrame containing tracks.
+
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    :return: All extracted trajectories as a dataframe with keys: `x`, `y`, `frame`, `data_folder`, `track_id`.
+    :rtype: pd.DataFrame
+    """
     num_files = len(parms['folder_names'])
     print(f"\nExtraction of tracjectories from {num_files} mdf files...")
     all_track_df = []
@@ -208,7 +245,15 @@ def extract_all_tracks(parms):
     return track_df_2
 
 def predict_states(track_df, model, parms):
-    """Predicts the states for each trajectory using a trained model."""
+    """Predicts the states for each trajectory using a trained model and saves the resulting state prediction as a csv file.
+
+    :param track_df: Name of the folder containing the trajectory file.
+    :type track_df: pd.DataFrame
+    :param model: Trained neural network.
+    :type model: keras model
+    :param parms: Stored parameters containing global variables and instructions.
+    :type parms: dict
+    """
     num_tracks = len(track_df['track_id'].unique())
     print(f'\nState prediction of {num_tracks:,d} trajectories...')
     for track_id in tqdm(track_df['track_id'].unique()):

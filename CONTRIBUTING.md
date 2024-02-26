@@ -10,7 +10,7 @@ Before starting, you should read, agree to, and follow this guideline.
 
 ### Report bugs
 
-Report bugs at: https://github.com/hkabbech/tracksegnet/issues/new.
+Report bugs at: [https://github.com/hkabbech/tracksegnet/issues/new](https://github.com/hkabbech/tracksegnet/issues/new).
 
 When reporting a bug, please include the detailed steps to reproduce the bug.
 Where possible, please write a test case.

@@ -1,5 +1,5 @@
-generate\_lstm\_model module
-============================
+generate\_lstm\_model
+=====================
 
 .. automodule:: generate_lstm_model
    :members:

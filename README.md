@@ -5,14 +5,15 @@
 
 ## Purposes
 
+Recent advances in the field of microscopy allow the capture, at nanometer resolution, of the motion of fluorescently-labeled particles in live cells such as proteins or chromatin loci. Therefore, the development of methods to characterize the dynamics of a group of particles has become more than necessary.
 
 `TrackSegNet` is a tool designed for the classification and segmentation of experimental trajectories, specifically those obtained from single-particle tracking microscopy data, into different diffusive states.
 
-To enable the training of the LSTM neural network, synthetic trajectories are initially generated, and the parameters of the generator can be fine-tuned.
+- To enable the training of the LSTM neural network, synthetic trajectories are initially generated, and the parameters of the generator can be fine-tuned.
 
-Upon completion of the training process, the experimental trajectories are classified at each point using the trained model. Subsequently, the trajectories are segmented and grouped based on their respective diffusive states. In this context, "diffusive states" refer to the distinct modes or patterns observed in the movement of particles.
+- Upon completion of the training process, the experimental trajectories are classified at each point using the trained model. Subsequently, the trajectories are segmented and grouped based on their respective diffusive states. In this context, "diffusive states" refer to the distinct modes or patterns observed in the movement of particles.
 
-For each segmented track, the diffusion constant ($D$) and anomalous exponent ($\alpha$) are further estimated. This is accomplished by computing the mean squared displacement (MSD), providing valuable insights into the dynamic behavior of the particles within each identified diffusive state.
+- For each segmented track, the diffusion constant (![equation](https://latex.codecogs.com/svg.image?\inline&space;D)) and anomalous exponent (![equation](https://latex.codecogs.com/svg.image?\inline&space;\alpha)) are further estimated. This is accomplished by computing the mean squared displacement (MSD), providing valuable insights into the dynamic behavior of the particles within each identified diffusive state.
 
 
 ![pipeline](paper/pipeline.png)
@@ -27,32 +28,28 @@ cd TrackSegNet
 
 ### Either create and run a docker container
 
-Build a docker image (Rebuild the image after changing the parameters):
 ```bash
+# Build a docker image (Rebuild the image after changing the parameters):
 docker compose build
-```
-Run the container:
-
-```bash
+# Run the container:
 docker compose run tracksegnet-env
 ```
 
-### Or create the environment and install the packages
+### Or create a virtual environment and install the packages
+
+Requirement: python3.8 or equivalent and the virtualenv library
 
 ```bash
-sudo apt install python3-virtualenv
-virtualenv -p /usr/bin/python3 tracksegnet-env
-source tracksegnet-env/bin/activate # for Windows: tracksegnet-env\bin\activate
+# Create the environment:
+python -m venv tracksegnet-env
+# virtualenv -p /usr/bin/python3 tracksegnet-env
+# Activate the environment:
+source ./tracksegnet-env/bin/activate # for Windows PowerShell: .\tracksegnet-env\Scripts\Activate.ps1 (run as administrator)
+# Install the required python libraries:
 python -m pip install -r requirements.txt
 ```
 
-Run the program:
-
-```bash
-./tracksegnet.py parms.csv
-```
-
-Note, to deactivate the virtual environment, type `deactivate`.
+Note for later, to deactivate the virtual environment, type `deactivate`.
 
 
 ## Prepare your data
@@ -87,21 +84,31 @@ If `CSV` format is used, the headers should be: `x, y, frame, track_id`
 
 ### Change the main parameters
 
-Update the main parameters in the `parms.csv` file according to your experiment:
+Tune the main parameters of the training in the `params.csv` file according to your experiment:
 
-- `data_path`: the path containing your data folder `SPT_experiment` to analyze
-- `track_format`: The format of the files containing the trajectory coordinates, should be `MDF` or `CSV`
-- `time_frame`: the time interval between two trajectory points (in second)
-- `pixel_size`: the dimension of a pixel (in µm)
-- `num_states`: the number of diffusive states for the classification(from 2 to 6 states)
-- `state_X_diff`: The expected diffusion value for state X (in µm^2/s).
-- `state_X_alpha`: The expected anomalous exponent α value for state X (from 0 to 2 -- ]0-1[: subdiffusion, 1: Brownian motion, ]1-2[: superdiffusion).
-- `pt_i_j`: the probability of transitionning from the state i to the state j. The total number of probabilities should be $N^2$.
+* `num_states` the number of diffusive states for the classification(from 2 to 6 states). This number can vary from 2 to 6 states, but it is recommended to choose 2 to 4 states.
+* `state_i_diff` and `state_i_alpha` the approximate motion parameters for each of the ![equation](https://latex.codecogs.com/svg.image?\inline&space;N) diffusive state. The diffusion constant ![equation](https://latex.codecogs.com/svg.image?\inline&space;D) is dimensionless, and the anomalous exponent value ![equation](https://latex.codecogs.com/svg.image?\inline&space;\alpha) is ranging from 0 to 2 (![equation](https://latex.codecogs.com/svg.image?\inline&space;]0-1[): subdiffusion, ![equation](https://latex.codecogs.com/svg.image?\inline&space;1): Brownian motion, ![equation](https://latex.codecogs.com/svg.image?\inline&space;]1-2[): superdiffusion).
+* `pt_i_j` the probability of transitionning from state i to state j. The total number of probabilities should be ![equation](https://latex.codecogs.com/svg.image?\inline&space;N^2).
+
+The remaining parameters are related to the experimental dataset:
+
+* `data_path`, the path of the dataset of trajectories to segment.
+* `track_format`, the format of the files containing the trajectory coordinates, either `MDF` (see `MTrackJ` data file format) or `CSV`
+* `time_frame`, the time interval between two trajectory points in seconds.
+* `pixel_size`, the dimension of a pixel in ![equation](https://latex.codecogs.com/svg.image?\inline&space;$\mu m).
+
 
 Note that the program will run on the toy example if the parameters are unchanged.
 
 For updating the parameters of the track simulation and neural network training, please make the changes in the main file `tracksegnet.py`.
 
+
+## Run the program
+
+
+```bash
+python tracksegnet.py parms.csv
+```
 
 ## Reference
 
