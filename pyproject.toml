@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "TrackSegNet"
-version = "1.2.0"
+version = "1.2.1"
 dynamic = ["dependencies"]
 authors = [
   { name="Hélène Kabbech", email="helene.kabbech@gmail.com" },
@@ -23,7 +23,7 @@ Homepage = "https://github.com/hkabbech/TrackSegNet"
 Issues = "https://github.com/hkabbech/TrackSegNet/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/analysis.py", "src/compute_features.py", "src/experimental_tracks.py", "src/generate_lstm_model.py", "src/simulate_tracks.py", "src/utils.py"]
+packages = ["tracksegnet/analysis.py", "tracksegnet/compute_features.py", "tracksegnet/experimental_tracks.py", "tracksegnet/generate_lstm_model.py", "tracksegnet/simulate_tracks.py", "tracksegnet/utils.py"]
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]

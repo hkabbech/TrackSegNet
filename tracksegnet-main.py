@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # coding: utf-8
 
 """
@@ -6,7 +6,7 @@
 
     Usage:
         # Adjust parameters in parms.csv before running the following command on the terminal:
-        python tracksegnet.py parms.csv
+        python tracksegnet-main.py parms.csv
 """
 
 # Third-party modules
@@ -19,11 +19,11 @@ import pandas as pd
 from tensorflow.keras.models import load_model
 
 # Local modules
-from src.utils import check_parms, get_color_list
-from src.simulate_tracks import run_track_simulation
-from src.experimental_tracks import extract_all_tracks, predict_states
-from src.generate_lstm_model import generate_lstm_model
-from src.analysis import compute_ptm, make_tracklet_lists, compute_all_msd,\
+from tracksegnet.utils import check_parms, get_color_list
+from tracksegnet.simulate_tracks import run_track_simulation
+from tracksegnet.experimental_tracks import extract_all_tracks, predict_states
+from tracksegnet.generate_lstm_model import generate_lstm_model
+from tracksegnet.analysis import compute_ptm, make_tracklet_lists, compute_all_msd,\
     plot_scatter_alpha_diffusion, plot_proportion, plot_displ, plot_angles, plot_vac
 
 if __name__ == "__main__":
