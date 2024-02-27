@@ -2,5 +2,5 @@
 
 
 ```bash
-python tracksegnet.py parms.csv
+python tracksegnet-main.py parms.csv
 ```

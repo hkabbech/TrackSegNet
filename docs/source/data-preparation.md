@@ -26,7 +26,7 @@ If `CSV` format is used, the headers should be: `x, y, frame, track_id`
 ├── src/
 ├── tracksegnet-env/
 ├── parms.csv
-├── tracksegnet.py
+├── tracksegnet-main.py
 └── ...
 ```
 
@@ -49,4 +49,4 @@ The remaining parameters are related to the experimental dataset:
 
 Note that the program will run on the toy example if the parameters are unchanged.
 
-For updating the parameters of the track simulation and neural network training, please make the changes in the main file `tracksegnet.py`.
+For updating the parameters of the track simulation and neural network training, please make the changes in the main file `tracksegnet-main.py`.

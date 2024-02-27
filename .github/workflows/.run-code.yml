@@ -26,4 +26,4 @@ jobs:
         pip install -r requirements.txt
     - name: Run code on toy example
       run: |
-        python tracksegnet.py parms.csv
+        python tracksegnet-main.py parms.csv
