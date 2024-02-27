@@ -16,7 +16,7 @@ from tqdm import tqdm
 from more_itertools import consecutive_groups
 
 # Local functions
-from src.compute_features import compute_all_features
+from tracksegnet.compute_features import compute_all_features
 
 
 def fill_gaps_l1(track):

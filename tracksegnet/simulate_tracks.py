@@ -11,8 +11,8 @@ import pandas as pd
 from tqdm import tqdm
 
 # Local functions
-from src.compute_features import compute_all_features
-from src.analysis import compute_ptm
+from tracksegnet.compute_features import compute_all_features
+from tracksegnet.analysis import compute_ptm
 
 
 def get_fbm(total_frame, alpha, diff):
