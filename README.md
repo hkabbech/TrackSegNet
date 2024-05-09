@@ -43,7 +43,7 @@ Requirement: python3.8 or equivalent and the virtualenv library
 # Create the environment:
 python -m venv tracksegnet-env # or virtualenv -p /usr/bin/python3 tracksegnet-env
 # Activate the environment:
-source ./tracksegnet-env/bin/activate # for Windows PowerShell: .\tracksegnet-env\Scripts\Activate.ps1 (run as administrator)
+ source ./tracksegnet-env/bin/activate # Or source ./tracksegnet-env/Scripts/activate for Windows. For PowerShell: .\tracksegnet-env\Scripts\Activate.ps1 (run as administrator)
 # Install the required python libraries:
 pip install -e . # or python -m pip install -r requirements.txt
 ```
