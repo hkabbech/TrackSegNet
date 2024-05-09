@@ -1,5 +1,4 @@
-![Python version](https://img.shields.io/badge/python-3.8-brightgreen.svg) [![DOI](https://zenodo.org/badge/583738628.svg)](https://zenodo.org/badge/latestdoi/583738628)
-
+![Python version](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-brightgreen.svg) [![pypi](https://img.shields.io/pypi/v/tracksegnet.svg?maxAge=3600)](https://pypi.org/project/tracksegnet/) [![DOI](https://zenodo.org/badge/583738628.svg)](https://zenodo.org/badge/latestdoi/583738628)
 
 # TrackSegNet
 
@@ -18,15 +17,23 @@ Recent advances in the field of microscopy allow the capture, at nanometer resol
 
 ![pipeline](paper/pipeline.png)
 
-## Installation and requirements
+## Installation
 
-### Clone the repository
+### Installation with pip
+
+```
+[sudo] pip install tracksegnet
+```
+
+### Installation from the GitHub repository and requirements
+
+- Clone the repository
 ```
 git clone https://github.com/hkabbech/TrackSegNet.git
 cd TrackSegNet
 ```
 
-### Either create and run a docker container
+- Either create and run a docker container
 
 ```bash
 # Build a docker image (Rebuild the image after changing the parameters):
@@ -35,15 +42,15 @@ docker compose build
 docker compose run tracksegnet-env
 ```
 
-### Or create a virtual environment and install the packages
+- Or create a virtual environment and install the packages
 
-Requirement: python3.8 or equivalent and the virtualenv library
+Requirement: python={3.8, 3.9, 3.10} and the virtualenv library
 
 ```bash
 # Create the environment:
 python -m venv tracksegnet-env # or virtualenv -p /usr/bin/python3 tracksegnet-env
 # Activate the environment:
-source ./tracksegnet-env/bin/activate # for Windows PowerShell: .\tracksegnet-env\Scripts\Activate.ps1 (run as administrator)
+ source ./tracksegnet-env/bin/activate # Or source ./tracksegnet-env/Scripts/activate for Windows. For PowerShell: .\tracksegnet-env\Scripts\Activate.ps1 (run as administrator)
 # Install the required python libraries:
 pip install -e . # or python -m pip install -r requirements.txt
 ```
