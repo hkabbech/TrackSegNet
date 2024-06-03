@@ -1,7 +1,6 @@
 ---
 title: 'TrackSegNet: a tool for trajectory segmentation into diffusive states using supervised deep learning'
 tags:
-  - Python
   - single-particle tracking
   - trajectory segmentation
   - supervised deep learning
@@ -9,14 +8,11 @@ tags:
 authors:
   - name: Hélène Kabbech
     orcid: 0000-0002-9200-2112
-    affiliation: "1"
   - name: Ihor Smal
-    orcid: 0000-0001-7576-7028 
-    affiliation: "1"
+    orcid: 0000-0001-7576-7028
 affiliations:
  - name: Department of Cell Biology, Erasmus University Medical Center, Rotterdam, the Netherlands
-   index: 1
-date: 14 March 2023
+date: June 2024
 bibliography: paper.bib
 ---
 
@@ -40,7 +36,7 @@ This software is based on the method of @arts2019 with major improvements, makin
 
 Tracking particles from 2-dimensional images results in a set $\mathcal{S}$ of trajectories $r_i \in \mathcal{S}$, $i = \left\{1, \dots, P \right\}$,  where $P$ is the total number of trajectories, and $r_i(t) = (x_i(t), y_i(t))$ are the 2D coordinates of the particle $i$ at time $t$.
 
-The network is built using functions from the Keras library [@chollet2015], and is composed of a bidirectional long short-term memory (LSTM) layer (having 200 hidden units), followed by a fully connected time-distributed layer with a `SoftMax` activation function. The inputs of the network are of six trajectory features previously computed, while the outputs are probabilities for each trajectory point of belonging to one of the $N$ diffusive states, the predicted state is defined by the highest probability.
+The network is built using functions from the Keras library, and is composed of a bidirectional long short-term memory (LSTM) layer (having 200 hidden units), followed by a fully connected time-distributed layer with a `SoftMax` activation function. The inputs of the network are of six trajectory features previously computed, while the outputs are probabilities for each trajectory point of belonging to one of the $N$ diffusive states, the predicted state is defined by the highest probability.
 
 The computed features along a given trajectory are: the displacements $\Delta x_{\delta=1}$ and $\Delta y_{\delta=1}$ at the first discrete time interval $\delta=1$ (with $\Delta r_\delta (t) = r(t) - r(t+\delta)$), the distances $d_{\delta=1}$ (with $d_\delta (t) = \sqrt{\Delta x_\delta (t)^2 + \Delta y_\delta (t)^2}$), the mean of displacements $\overline{d_{\delta=1,p=1}}$ and $\overline{d_{\delta=2,p=1}}$ (with $\overline{d_{\delta,p}}(t) = \frac{1}{2p+1}\sum_{k=t-p}^{t+p} d_{\delta}(k)$ with $p\geq 1$) and the angles $\theta_{\delta=1}$ between consecutive displacements. The last feature is an addition to the initial method, used for a better distinction of the trajectory confinement. The first and last trajectory points of each trajectory vector are discarded due to missing computed feature(s).
 
