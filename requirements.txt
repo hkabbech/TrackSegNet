@@ -57,4 +57,4 @@ myst_parser>=2.0.0
 sphinx>=7.0.0
 sphinx_rtd_theme>=2.0.0
 readthedocs-sphinx-search>=0.1.1
-tracksegnet==1.2.5
+tracksegnet==1.3.0
