@@ -1,4 +1,4 @@
-![Python version](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-brightgreen.svg) [![pypi](https://img.shields.io/pypi/v/tracksegnet.svg?maxAge=3600)](https://pypi.org/project/tracksegnet/) [![DOI](https://zenodo.org/badge/583738628.svg)](https://zenodo.org/badge/latestdoi/583738628)
+![Python version](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-brightgreen.svg) [![pypi](https://img.shields.io/pypi/v/tracksegnet.svg?maxAge=3600)](https://pypi.org/project/tracksegnet) [![DOI](https://zenodo.org/badge/583738628.svg)](https://zenodo.org/badge/latestdoi/583738628)
 
 # TrackSegNet
 
