@@ -9,13 +9,10 @@ tags:
 authors:
   - name: Hélène Kabbech
     orcid: 0000-0002-9200-2112
-    affiliation: "1"
   - name: Ihor Smal
-    orcid: 0000-0001-7576-7028 
-    affiliation: "1"
+    orcid: 0000-0001-7576-7028
 affiliations:
  - name: Department of Cell Biology, Erasmus University Medical Center, Rotterdam, the Netherlands
-   index: 1
 date: June 2024
 bibliography: paper.bib
 ---
