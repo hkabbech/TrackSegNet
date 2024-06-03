@@ -16,7 +16,7 @@ authors:
 affiliations:
  - name: Department of Cell Biology, Erasmus University Medical Center, Rotterdam, the Netherlands
    index: 1
-date: 14 March 2023
+date: June 2024
 bibliography: paper.bib
 ---
 
