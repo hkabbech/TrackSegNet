@@ -13,7 +13,7 @@ google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
 grpcio>=1.53.0
 h5py==3.8.0
-idna==3.4
+idna>=3.7
 importlib-metadata==6.0.0
 keras==2.11.0
 kiwisolver==1.4.4
@@ -47,7 +47,7 @@ tensorflow==2.11.1
 tensorflow-estimator==2.11.0
 tensorflow-io-gcs-filesystem==0.30.0
 termcolor==2.2.0
-tqdm==4.64.1
+tqdm>=4.66.3
 typing-extensions==4.4.0
 urllib3>=1.26.18
 werkzeug>=2.3.8
