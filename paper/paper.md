@@ -1,7 +1,6 @@
 ---
 title: 'TrackSegNet: a tool for trajectory segmentation into diffusive states using supervised deep learning'
 tags:
-  - Python
   - single-particle tracking
   - trajectory segmentation
   - supervised deep learning
