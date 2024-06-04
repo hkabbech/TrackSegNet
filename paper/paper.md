@@ -33,7 +33,7 @@ Several trajectory classification methods have recently been developed by the co
 
 # Method
 
-This software is based on the method of @arts2019 with major improvements, making use of a stack of LSTM layers trained on synthetic trajectory features. The improvements include the calculation of angles as a feature to better distinguish the trajectory confinment, better management of trajectory gaps, and the use of the mean squared displacement (MSD) instead of the moment scaling spectrum (MSS) analysis to better estimate the dynamics. This version includes a user-friendly software allowing the replicability for other datasets.
+This software is based on the method of @arts2019 with major improvements, making use of a stack of LSTM layers trained on synthetic trajectory features. The improvements include the calculation of angles as a feature to better distinguish the trajectory confinement, better management of trajectory gaps, and the use of the mean squared displacement (MSD) instead of the moment scaling spectrum (MSS) analysis to better estimate the dynamics. This version includes a user-friendly software allowing the replicability for other datasets.
 
 ## Neural Network
 
