@@ -1,4 +1,4 @@
-![Python version](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-brightgreen.svg) [![pypi](https://img.shields.io/pypi/v/tracksegnet.svg?maxAge=3600)](https://pypi.org/project/tracksegnet) [![DOI](https://zenodo.org/badge/583738628.svg)](https://zenodo.org/badge/latestdoi/583738628)
+![Python version](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-brightgreen.svg)  [![DOI](https://joss.theoj.org/papers/10.21105/joss.06157/status.svg)](https://joss.theoj.org/papers/10.21105/joss.06157) [![pypi](https://img.shields.io/pypi/v/tracksegnet.svg?maxAge=3600)](https://pypi.org/project/tracksegnet)
 
 # TrackSegNet
 
@@ -118,5 +118,7 @@ python tracksegnet-main.py parms.csv
 
 ## Reference
 
-Yavuz, S., Kabbech, H., van Staalduinen, J., Linder, S., van Cappellen, W.A., Nigg, A.L., Abraham, T.E., Slotman, J.A., Quevedo, M. Poot, R.A., Zwart, W., van Royen, M.E., Grosveld, F.G., Smal, I., Houtsmuller, A.B. (2023). Compartmentalization of androgen receptors at endogenous genes in living cells, *Nucleic Acids Research* 51(20), [https://doi.org/10.1093/nar/gkad803](https://doi.org/10.1093/nar/gkad803). 
+Kabbech H. et al., (2024). TrackSegNet: a tool for trajectory segmentation into diffusive states using supervised deep learning. Journal of Open Source Software, 9(98), 6157, [https://doi.org/10.21105/joss.06157](https://doi.org/10.21105/joss.06157)
+
+Yavuz, S., Kabbech, H., van Staalduinen, J., Linder, S., van Cappellen, W.A., Nigg, A.L., Abraham, T.E., Slotman, J.A., Quevedo, M. Poot, R.A., Zwart, W., van Royen, M.E., Grosveld, F.G., Smal, I., Houtsmuller, A.B. (2023). Compartmentalization of androgen receptors at endogenous genes in living cells, *Nucleic Acids Research* 51(20), [https://doi.org/10.1093/nar/gkad803](https://doi.org/10.1093/nar/gkad803).
 
